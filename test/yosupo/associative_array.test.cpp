@@ -6,6 +6,7 @@ using namespace std;
 #include "other/blazingio.hpp"
 
 #include "ds/hashmap.hpp"
+#include "other/chash.hpp"
 
 int main() {
     int q;
