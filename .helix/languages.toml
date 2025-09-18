@@ -1,0 +1,13 @@
+[language-server.clangd]
+args = ["--header-insertion=never"]
+
+[language-server.clangd.config]
+fallbackFlags = [
+    "-I/home/imsuck/Yes/cp-library/",
+    "-std=c++17",
+    "-Wall",
+    "-Wconversion",
+    "-Wno-sign-conversion",
+    # "-Wno-shorten-64-to-32",
+    "-Wno-unqualified-std-cast-call",
+]
