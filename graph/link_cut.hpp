@@ -13,6 +13,7 @@ template<class node> struct LCT {
 
     void splay(int v) { splay(&nodes[v]); }
     void expose(int v) { expose(&nodes[v]); }
+    void expose_path(int u, int v) { evert(u), expose(v); }
     void evert(int v) { evert(&nodes[v]); }
     void link(int u, int v) { link(&nodes[u], &nodes[v]); }
     void cut(int u, int v) { cut(&nodes[u], &nodes[v]); }

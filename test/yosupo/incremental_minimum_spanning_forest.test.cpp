@@ -31,13 +31,17 @@ int main() {
         cin >> u[i] >> v[i] >> w;
         tr.set(i + n, pair{w, i});
         int ans = -1;
+        if (u[i] == v[i]) {
+            cout << i << "\n";
+            continue;
+        }
         if (tr.lca(u[i], v[i]) == -1) {
             cout << -1 << " \n"[i == m - 1];
             tr.link(u[i], i + n);
             tr.link(v[i], i + n);
             continue;
         }
-        tr.evert(u[i]), tr.expose(v[i]);
+        tr.expose_path(u[i], v[i]);
         auto [mx, id] = tr[v[i]]->path;
         if (w > mx) {
             ans = i;
