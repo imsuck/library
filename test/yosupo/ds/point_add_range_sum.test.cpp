@@ -21,7 +21,7 @@ int main() {
         if (t == 0) {
             int p, x;
             cin >> p >> x;
-            st.set(p, st[p] + x);
+            st[p] += x;
         } else {
             int l, r;
             cin >> l >> r, cout << st(l, r) << "\n";
