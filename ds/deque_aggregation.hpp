@@ -24,6 +24,7 @@ template<class M> struct DequeAggregation {
     bool empty() const { return size() == 0; }
 
     vector<array<T, 2>> f, b;
+
   private:
     template<int d = 0> T getf() const {
         return f.size() ? f.back()[d] : M::id();
@@ -32,13 +33,13 @@ template<class M> struct DequeAggregation {
         return b.size() ? b.back()[d] : M::id();
     }
     void rebalance() {
-        int n = size(), i = 0;
         bool ef = f.empty();
+        int n = size(), i = 0, m = n / 2 + ef;
         vector<T> xs(n);
         for (; f.size(); f.pop_back()) xs[i++] = getf();
         for (; b.size(); b.pop_back()) xs[i++] = getb();
-        if (!ef) reverse(begin(xs), end(xs));
-        for (i = n - 1; i >= 0; i--) push_front(xs[i]);
-        for (i = n; i < n; i++) push_back(xs[i]);
+        if (ef) reverse(begin(xs), end(xs));
+        for (i = m - 1; i >= 0; i--) push_front(xs[i]);
+        for (i = m; i < n; i++) push_back(xs[i]);
     }
 };

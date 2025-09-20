@@ -10,8 +10,7 @@ using namespace std;
 struct node : lct_node<node> {
     using lct_node<node>::lct_node;
 
-    i32 val = 0;
-    i64 sum = 0, light = 0;
+    i64 val = 0, sum = 0, light = 0;
 
     void set(i32 x) { val = x; }
     void add(i32 x) { val += x; }
