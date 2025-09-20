@@ -37,6 +37,8 @@ struct HLD {
         assert(0 <= v && v < n);
         return {in[v], out[v]};
     }
+    int operator[](int v) { return in[v]; }
+    int operator()(int v) { return out[v]; }
 
   private:
     int time = 0;

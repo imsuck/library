@@ -37,7 +37,7 @@ template<class Int> struct sbt_node {
     friend bool operator<=(const sbt_node &a, const sbt_node &b) { return !(a > b); }
     friend bool operator>=(const sbt_node &a, const sbt_node &b) { return !(a < b); }
 
-    static sbt_node lca(const sbt_node &a, const sbt_node &b) {
+    friend sbt_node lca(const sbt_node &a, const sbt_node &b) {
         const sbt_path &pa = a.path(), &pb = b.path();
         const int k = (int)min(pa.size(), pb.size());
         sbt_node c;
@@ -52,11 +52,9 @@ template<class Int> struct sbt_node {
         }
         return c;
     }
-    static sbt_node dist(const sbt_node &a, const sbt_node &b) {
+    friend Int dist(const sbt_node &a, const sbt_node &b) {
         return a.depth() + b.depth() - 2 * lca(a, b).depth();
     }
-    sbt_node lca(const sbt_node &other) const { return lca(*this, other); }
-    sbt_node dist(const sbt_node &other) const { return dist(*this, other); }
 
     bool go_up(Int k) {
         if (k < 0 || depth() < k) return false;
