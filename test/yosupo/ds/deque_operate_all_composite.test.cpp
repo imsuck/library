@@ -2,7 +2,6 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "ds/deque_aggregation.hpp"
 #include "math/modint.hpp"
@@ -19,6 +18,7 @@ struct M {
 };
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int q;
     cin >> q;
     DequeAggregation<M> dq;
@@ -32,7 +32,7 @@ int main() {
             op == 2 ? dq.pop_front() : dq.pop_back();
         } else {
             cin >> x;
-            cout << (int)dq.query()(x) << "\n";
+            cout << dq.query()(x) << "\n";
         }
     }
 }

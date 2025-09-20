@@ -2,7 +2,6 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "ds/dynlazysegtree.hpp"
 #include "math/modint.hpp"
@@ -24,6 +23,7 @@ struct M {
 };
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int n, q;
     cin >> n >> q;
     DynLazySegTree<M> st(n);
@@ -34,7 +34,7 @@ int main() {
             cin >> b >> c;
             st.apply(l, r, {b, c});
         } else {
-            cout << (int)st(l, r) << "\n";
+            cout << st(l, r) << "\n";
         }
     }
 }

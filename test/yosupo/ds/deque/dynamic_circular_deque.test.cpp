@@ -2,12 +2,11 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "ds/circular_deque.hpp"
 
 int main() {
-    cin.tie(0)->sync_with_stdio(0);
+    cin.tie(nullptr)->sync_with_stdio(false);
     int q;
     cin >> q;
 

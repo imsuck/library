@@ -2,7 +2,6 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "graph/link_cut.hpp"
 #include "math/modint.hpp"
@@ -30,6 +29,7 @@ struct node : lct_node<node> {
 };
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     i32 n, q;
     cin >> n >> q;
     LCT<node> tr(n);
@@ -51,7 +51,7 @@ int main() {
             cin >> u >> v >> x;
             tr.expose_path(u, v);
             auto [a, b] = tr[v]->path[0];
-            cout << i32(a * x + b) << "\n";
+            cout << a * x + b << "\n";
         }
     }
 }

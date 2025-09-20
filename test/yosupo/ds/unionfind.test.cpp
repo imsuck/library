@@ -2,11 +2,11 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "graph/dsu.hpp"
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int n, q;
     cin >> n >> q;
     DSU dsu(n);

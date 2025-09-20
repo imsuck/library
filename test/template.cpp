@@ -2,8 +2,7 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 int main() {
-    
+    cin.tie(nullptr)->sync_with_stdio(false);
 }

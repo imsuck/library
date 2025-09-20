@@ -2,11 +2,11 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "other/two_sat.hpp"
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int n, m;
     string buf;
     cin >> buf >> buf >> n >> m;

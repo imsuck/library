@@ -2,7 +2,6 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "ds/swag.hpp"
 #include "math/modint.hpp"
@@ -19,6 +18,7 @@ struct M {
 };
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int q;
     cin >> q;
     SWAG<M> swag;
@@ -32,7 +32,7 @@ int main() {
             swag.pop();
         } else {
             cin >> x;
-            cout << (int)swag.query()(x) << "\n";
+            cout << swag.query()(x) << "\n";
         }
     }
 }

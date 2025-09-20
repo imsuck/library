@@ -2,12 +2,12 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "graph/dsu.hpp"
 #include "other/types.hpp"
 
 i32 main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     struct Edge {
         i32 u, v;
         i64 w;

@@ -2,11 +2,11 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "ds/ordered_set.hpp"
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int n, q;
     cin >> n >> q;
 

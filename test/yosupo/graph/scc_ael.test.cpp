@@ -2,12 +2,12 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "graph/ael.hpp"
 #include "graph/scc.hpp"
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int n, m;
     cin >> n >> m;
 

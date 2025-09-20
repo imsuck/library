@@ -2,7 +2,6 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "ds/segtree.hpp"
 #include "math/modint.hpp"
@@ -18,6 +17,7 @@ struct M {
 };
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int n, q;
     cin >> n >> q;
     SegTree<M> st(n, [](int) {
@@ -31,7 +31,7 @@ int main() {
         if (t == 0) {
             st[a] = {b, c};
         } else {
-            cout << (int)st(a, b)(c) << "\n";
+            cout << st(a, b)(c) << "\n";
         }
     }
 }

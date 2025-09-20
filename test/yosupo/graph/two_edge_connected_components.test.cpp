@@ -2,11 +2,11 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "graph/bridge_tree.hpp"
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int n, m;
     cin >> n >> m;
     vector<basic_string<int>> g(n);

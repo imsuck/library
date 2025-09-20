@@ -2,13 +2,13 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "math/stern_brocot_tree.hpp"
 
 using node = sbt_node<int>;
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int q;
     cin >> q;
 

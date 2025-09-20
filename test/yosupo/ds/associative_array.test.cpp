@@ -3,12 +3,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "other/blazingio.hpp"
-
 #include "ds/hashmap.hpp"
 #include "other/chash.hpp"
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int q;
     cin >> q;
     hash_map<int64_t, int64_t, chash> m;

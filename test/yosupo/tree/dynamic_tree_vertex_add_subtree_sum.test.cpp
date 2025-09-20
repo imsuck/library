@@ -2,7 +2,6 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "graph/link_cut.hpp"
 #include "other/types.hpp"
@@ -21,6 +20,7 @@ struct node : lct_node<node> {
 };
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     i32 n, q;
     cin >> n >> q;
     LCT<node> tr(n);

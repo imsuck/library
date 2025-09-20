@@ -2,7 +2,6 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-#include "other/blazingio.hpp"
 
 #include "ds/segtree.hpp"
 #include "graph/hld.hpp"
@@ -15,6 +14,7 @@ struct M {
 };
 
 int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
     int n, q;
     cin >> n >> q;
     vector<int> a(n);
