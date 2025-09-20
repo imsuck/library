@@ -45,7 +45,7 @@ struct HLD {
     template<class G> int dfs_sz(G &g, int v, int p = -1) {
         par[v] = p;
         int sz = 1, mx = 0;
-        for (int &c : g[v]) {
+        for (auto &c : g[v]) {
             if (c == p) continue;
             dep[c] = dep[v] + 1;
             int s = dfs_sz(g, c, v);
@@ -56,7 +56,7 @@ struct HLD {
     }
     template<class G> void dfs_hld(G &g, int v, int p = -1) {
         in[v] = time++;
-        for (int c : g[v]) {
+        for (auto c : g[v]) {
             if (c == p) continue;
             hs[c] = (c == g[v][0] ? hs[v] : c);
             dfs_hld(g, c, v);

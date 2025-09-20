@@ -3,17 +3,25 @@ title: Disjoint Sparse Table
 documentation_of: //ds/disjoint_sparse_table.hpp
 ---
 
-## Overview
-Handle range queries under semi-group, $\mathcal O(n\log n)$ build,
-$\mathcal O(1)$ query.
+## Description
+Handle static range queries under a semi-group (identity element for
+placeholding).
 
-## Usage
-- Pass a semi-group with the following content:
-  + Type `T`
-  + `static T id()`
-  + `static T op(T l, T r)`
-- Querying: `prod(l, r)` returns the product in the range $[l, r)$
+## Operations
+- `DisjointSparseTable<M>(const vector<T> &v)`
+  + Construct disjoint sparse table
+  + Time complexity: $\mathcal O(n \log n)$
+- `T prod(int l, int r)`
+  + Returns the product of the range $[l, r)$
+  + Time complexity: $\mathcal O(1)$
 
-## Time complexity
-- Constructor: $\mathcal O(n\log n)$
-- `prod(l, r)`: $\mathcal O(1)$
+## Example
+```cpp
+struct M {
+  using T = int;
+  static T id() { return 1.1e9; }
+  static T op(T l, T r) { return min(l, r); }
+};
+DisjointSparseTable<M> st(vector{1, 7, 2, 3});
+assert(st.prod(1, 4) == 2);
+```
