@@ -53,11 +53,11 @@ int main() {
     };
     // we already applied the point cluster's affine function
     // so just add it to a[v]
-    auto add_vertex = [&](Point x, int v) -> Path {
+    auto add_vertex = [&](Point t, int v) -> Path {
         int e = v_e[v];
-        return {b[e] * (a[v] + x[0]) + c[e] * (1 + x[1]), 1, b[e], c[e]};
+        return {b[e] * (a[v] + t[0]) + c[e] * (1 + t[1]), 1 + t[1], b[e], c[e]};
     };
-    auto add_edge = [&](Path x) -> Point { return {x[0], x[1]}; };
+    auto add_edge = [&](Path t) -> Point { return {t[0], t[1]}; };
     // how does child affect the top boundary vertex?
     auto compress = [&](Path p, Path ch) -> Path {
         return {
@@ -68,30 +68,31 @@ int main() {
         };
     };
     // simply combine sum and size
-    auto rake = [&](Point x, Point y) -> Point {
-        return {x[0] + y[0], x[1] + y[1]};
+    auto rake = [&](Point l, Point r) -> Point {
+        return {l[0] + r[0], l[1] + r[1]};
     };
 
     auto pull = [&](int v) -> void {
-        if (stt[v].t == Type::Vertex) {
+        if (stt[v].t == Vertex) {
             path[v] = vertex(v);
-        } else if (stt[v].t == Type::AddVertex) {
+        } else if (stt[v].t == AddVertex) {
             path[v] = add_vertex(point[stt[v].l], v);
-        } else if (stt[v].t == Type::AddEdge) {
+        } else if (stt[v].t == AddEdge) {
             point[v] = add_edge(path[stt[v].l]);
-        } else if (stt[v].t == Type::Compress) {
+        } else if (stt[v].t == Compress) {
             path[v] = compress(path[stt[v].l], path[stt[v].r]);
-        } else if (stt[v].t == Type::Rake) {
+        } else if (stt[v].t == Rake) {
             point[v] = rake(point[stt[v].l], point[stt[v].r]);
         }
     };
+
     y_comb([&](auto &dfs, int v) -> void {
         if (stt[v].l != -1) dfs(stt[v].l);
         if (stt[v].r != -1) dfs(stt[v].r);
         pull(v);
     })(stt.rt);
 
-    auto fix_root = [&](int v) {
+    auto pull_from = [&](int v) {
         for (; v != -1; v = stt[v].p) pull(v);
     };
 
@@ -101,11 +102,11 @@ int main() {
         if (op == 0) {
             cin >> x >> y;
             a[x] = y;
-            fix_root(x);
+            pull_from(x);
         } else if (op == 1) {
             cin >> x >> y >> z;
             b[x] = y, c[x] = z;
-            fix_root(e_v[x]);
+            pull_from(e_v[x]);
         }
         cout << path[stt.rt][0] << "\n";
     }

@@ -14,7 +14,7 @@ int main() {
     cin >> n;
     vector<mint> a(n + 1), b(n + 1);
     for (int i = 1; i <= n; i++) cin >> a[i];
-    for (int i = 1; i <= n; i++) cin >> a[i];
+    for (int i = 1; i <= n; i++) cin >> b[i];
     auto c = lcm_convolution(a, b);
     for (int i = 1; i <= n; i++) cout << c[i] << " \n"[i == n];
 }

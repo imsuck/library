@@ -1,4 +1,6 @@
 #pragma once
+#include <bits/stdc++.h>
+using namespace std;
 
 template<class node> struct LCT {
     using ptr = node *;
@@ -21,14 +23,18 @@ template<class node> struct LCT {
         ptr l = lca(&nodes[u], &nodes[v]);
         return l ? l->id : -1;
     }
-    template<class T> void set(int v, T &&x) { expose(v), nodes[v].set(x); }
-    template<class T> void add(int v, T &&x) { expose(v), nodes[v].add(x); }
+    template<class... T> void set(int v, T &&...x) {
+        expose(v), nodes[v].set(x...);
+    }
+    template<class... T> void add(int v, T &&...x) {
+        expose(v), nodes[v].add(x...);
+    }
 
     static void splay(ptr t) {
-        for (t->push(); state(t); rot(t)) {
+        for (t->_push(); state(t); rot(t)) {
             ptr p = t->p, g = p->p;
-            if (g) g->push();
-            p->push(), t->push();
+            if (g) g->_push();
+            p->_push(), t->_push();
             if (state(p)) rot(state(t) == state(p) ? p : t);
         }
     }
@@ -36,13 +42,13 @@ template<class node> struct LCT {
         ptr prv = 0, cur = t;
         for (; cur; cur = cur->p) {
             splay(cur);
-            if (cur->r) cur->add_light(cur->r);
-            if (prv) cur->sub_light(prv);
+            if (cur->r) cur->_add_light(cur->r);
+            if (prv) cur->_sub_light(prv);
             attach(cur, 1, exchange(prv, cur));
         }
         splay(t);
     }
-    static void evert(ptr t) { expose(t), t->reverse(); }
+    static void evert(ptr t) { expose(t), t->_flip(); }
     static void link(ptr v, ptr p) {
         evert(v), expose(p);
         assert(!v->p && !p->r);
@@ -74,7 +80,7 @@ template<class node> struct LCT {
         ptr p = t->p, g = p->p;
         int d = state(t) == 1, dp = state(p);
         t->p = p->p;
-        if (g) dp ? attach(g, dp == 1, t) : g->change_light(p, t);
+        if (g) dp ? attach(g, dp == 1, t) : g->_change_light(p, t);
         attach(p, d, ch(t, !d));
         attach(t, !d, p);
     }
@@ -92,9 +98,31 @@ template<class node> struct lct_node {
     lct_node(int i = -1) : id(i) {}
 
     node *as_derived() { return (node *)this; };
-    void push() {
-        if (exchange(rev, 0)) $(l)->reverse(), $(r)->reverse();
-        as_derived()->_push();
+    void _push() {
+        if (exchange(rev, 0)) $(l)->_flip(), $(r)->_flip();
+        if constexpr (has_push<node>) as_derived()->push();
     }
-    void reverse() { swap(l, r), rev ^= 1, as_derived()->_reverse(); }
+    void _flip() {
+        swap(l, r), rev ^= 1;
+        if constexpr (has_flip<node>) as_derived()->flip();
+    }
+
+    void _add_light(ptr c) {
+        if constexpr (has_add_light<node>) as_derived()->add_light(c);
+    }
+    void _sub_light(ptr c) {
+        if constexpr (has_sub_light<node>) as_derived()->sub_light(c);
+    }
+    void _change_light(ptr p, ptr c) {
+        if constexpr (has_change_light<node>) as_derived()->change_light(p, c);
+    }
+
+// rip compile time
+#define CHECK(a) \
+    template<class T, class = void> struct has_##a##_t : false_type {}; \
+    template<class T> struct has_##a##_t<T, void_t<decltype(&T::a)>> : true_type {}; \
+    template<class T> static constexpr bool has_##a = has_##a##_t<T>::value;
+    CHECK(push) CHECK(flip)
+    CHECK(add_light) CHECK(sub_light) CHECK(change_light)
+#undef CHECK
 };

@@ -12,14 +12,8 @@ struct node : lct_node<node> {
     pair<int, int> val{0, -1}, path{0, -1};
 
     void pull() { path = max({$(l)->path, val, $(r)->path}); }
-    void _reverse() {}
-    void _push() {}
 
     void set(pair<int, int> a) { val = a; }
-
-    void add_light(ptr) {}
-    void sub_light(ptr) {}
-    void change_light(ptr, ptr) {}
 };
 
 int main() {
