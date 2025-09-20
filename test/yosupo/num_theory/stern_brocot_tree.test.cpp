@@ -20,7 +20,8 @@ int main() {
             cin >> a >> b;
             auto path = node(a, b).path();
             cout << path.size();
-            for (auto [d, n] : path) cout << ' ' << (!d ? 'L' : 'R') << n;
+            for (auto [d, n] : path)
+                cout << ' ' << (!d ? 'L' : 'R') << ' ' << n;
             cout << '\n';
         } else if (op == "DECODE_PATH") {
             int k;

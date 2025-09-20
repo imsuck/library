@@ -12,9 +12,9 @@ int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
     int n;
     cin >> n;
-    vector<mint> a(n), b(n);
-    for (mint &i : a) cin >> i;
-    for (mint &i : b) cin >> i;
+    vector<mint> a(n + 1), b(n + 1);
+    for (int i = 1; i <= n; i++) cin >> a[i];
+    for (int i = 1; i <= n; i++) cin >> a[i];
     auto c = lcm_convolution(a, b);
-    for (int i = 0; i < n; i++) cout << c[i] << " \n"[i == n - 1];
+    for (int i = 1; i <= n; i++) cout << c[i] << " \n"[i == n];
 }

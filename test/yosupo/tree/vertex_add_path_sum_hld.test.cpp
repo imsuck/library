@@ -26,7 +26,9 @@ int main() {
         g[u] += v, g[v] += u;
     }
     HLD hld(g);
-    SegTree<M> st(n, [&](int i) { return a[hld[i]]; });
+    vector<int> inv(n);
+    for (int i = 0; i < n; i++) inv[hld[i]] = i;
+    SegTree<M> st(n, [&](int i) { return a[inv[i]]; });
 
     while (q--) {
         int t, p, x, u, v;

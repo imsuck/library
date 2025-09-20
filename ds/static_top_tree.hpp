@@ -29,7 +29,7 @@ template<class G> struct STT {
             }
             return s;
         })(root);
-        rt = compress(rt)[0];
+        rt = compress(root)[0];
         vs.shrink_to_fit();
     }
 
