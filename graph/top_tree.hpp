@@ -4,7 +4,8 @@ using namespace std;
 
 #include "../other/st_alloc.hpp"
 
-// reference: https://ei1333.github.io/library/structure/dynamic-tree/top-tree.hpp
+// reference:
+// https://ei1333.github.io/library/structure/dynamic-tree/top-tree.hpp
 template<class TreeDP> struct TopTree {
     using Info = typename TreeDP::Info;
     using Point = typename TreeDP::Point;
@@ -120,32 +121,12 @@ template<class TreeDP> struct TopTree {
             return t;
         }
     };
-<<<<<<< HEAD
-    struct node : lct_node<node> {
-        using base = lct_node<node>;
-        using base::base, base::l, base::r;
-
-        using ptr = node *;
-        Info info;
-        Path sum, mus;
-        splay_node *light = 0, *point = 0;
-||||||| parent of c33a460 (finish top tree, has huge constants though...)
-    struct node : lct_node<node> {
-        using base = lct_node<node>;
-        using base::l, base::r;
-
-        using ptr = node *;
-        Info info;
-        Path sum, mus;
-        splay_node *light = 0, *point = 0;
-=======
     struct node {
         ptr p = 0, l = 0, r = 0;
         bool rev = 0;
         Info info{};
         Path sum{}, mus{};
         rake_node *light = 0, *point = 0;
->>>>>>> c33a460 (finish top tree, has huge constants though...)
 
         void pull() {
             Point raked = light ? TreeDP::add_vertex(light->sum, info)
