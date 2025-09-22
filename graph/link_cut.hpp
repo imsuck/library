@@ -17,8 +17,8 @@ template<class node> struct LCT {
     void expose(int v) { expose(&nodes[v]); }
     void expose_path(int u, int v) { evert(u), expose(v); }
     void evert(int v) { evert(&nodes[v]); }
-    void link(int u, int v) { link(&nodes[u], &nodes[v]); }
-    void cut(int u, int v) { cut(&nodes[u], &nodes[v]); }
+    void link(int v, int p) { link(&nodes[v], &nodes[p]); }
+    void cut(int v, int p) { cut(&nodes[v], &nodes[p]); }
     int lca(int u, int v) {
         ptr l = lca(&nodes[u], &nodes[v]);
         return l ? l->id : -1;
@@ -60,13 +60,13 @@ template<class node> struct LCT {
         attach(v, 0, p->p = 0);
     }
     static ptr lca(ptr u, ptr v) {
+        if (u == v) return u;
         expose(u), expose(v);
         if (!u->p) return 0;
         splay(u);
         return u->p ?: u;
     }
 
-  private:
     static ptr &ch(ptr t, bool d) { return d ? t->r : t->l; }
     static void attach(ptr p, int d, ptr c) {
         if (c) c->p = p;
