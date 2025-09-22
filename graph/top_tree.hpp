@@ -3,7 +3,6 @@
 using namespace std;
 
 #include "../other/st_alloc.hpp"
-#include "link_cut.hpp"
 
 // reference: https://ei1333.github.io/library/structure/dynamic-tree/top-tree.hpp
 template<class TreeDP> struct TopTree {
@@ -12,104 +11,116 @@ template<class TreeDP> struct TopTree {
     using Path = typename TreeDP::Path;
 
     struct node;
-    LCT<node> tr;
+    using ptr = node *;
+    vector<node> nodes;
 
-    TopTree(int n) : tr(n) {}
+    TopTree(int n = 0) : nodes(n) { for (int i = 0; i < n; i++); }
+    TopTree(const vector<Info> &v) : nodes(v.size()) {
+        for (int i = 0; i < v.size(); i++) {
+            nodes[i].id = i;
+            nodes[i].info = v[i];
+            nodes[i].pull();
+        }
+    }
 
-    void link(int v, int p) { link(tr[v], tr[p]); }
-    void cut(int v, int p) { cut(tr[v], tr[p]); }
-    bool connected(int u, int v) { return connected(tr[u], tr[v]); }
-    Path query(int v) {
-        evert(tr[v]);
-        return tr[v]->sum;
+    auto operator[](int i) { return &nodes[i]; }
+
+    void splay(int v) { splay(&nodes[v]); }
+    void expose(int v) { expose(&nodes[v]); }
+    void evert(int v) { evert(&nodes[v]); }
+    void link(int v, int p) { link(&nodes[v], &nodes[p]); }
+    void cut(int v) { cut(&nodes[v]); }
+    void cut(int v, int r) { evert(r), cut(v); }
+    void set(int v, const Info &x) {
+        apply(v, [&x](auto &info) { info = x; });
     }
-    Path query_path(int v) {
-        expose(tr[v]);
-        return tr[v]->sum;
+    template<class F> void apply(int v, F &&f) {
+        expose(v), f(nodes[v].info), nodes[v].pull();
     }
-    Path query_path(int u, int v) {
-        evert(tr[u]);
-        return query_path(v);
+    int lca(int u, int v) {
+        ptr l = lca(&nodes[u], &nodes[v]);
+        return l ? l->id : -1;
     }
-    Path query_subtree(int v) {
-        expose(tr[v]);
-        ptr l = exchange(tr[v]->l, 0);
-        tr[v]->pull();
-        Path ret = tr[v]->sum;
-        tr[v]->l = l;
-        tr[v]->pull();
+    Path fold(int v) { return evert(v), nodes[v].sum; }
+    Path fold_path(int v) { return expose(v), nodes[v].sum; }
+    Path fold_path(int u, int v) { return evert(u), fold_path(v); }
+    Path fold_subtree(int v) {
+        expose(v);
+        ptr l = nodes[v].l;
+        nodes[v].l = 0, nodes[v].pull();
+        Path ret = nodes[v].sum;
+        nodes[v].l = l, nodes[v].pull();
         return ret;
     }
-    Path query_subtree(int v, int r) {
-        evert(tr[r]);
-        return query_subtree(v);
-    }
+    Path fold_subtree(int v, int r) { return evert(r), fold_subtree(v); }
 
-    struct splay_node : st_alloc<splay_node> {
-        using ptr = splay_node *;
-        ptr p = 0, l = 0, r = 0;
-        Point key{}, sum{};
+    struct rake_node : st_alloc<rake_node> {
+        using rptr = rake_node *;
+        rptr p = 0, l = 0, r = 0;
+        Point val{}, sum{};
 
-        splay_node(const Point &x) : key(x), sum(x) {}
+        rake_node() {}
+        rake_node(const Point &x) : p(0), l(0), r(0), val(x), sum(x) {}
 
-        int state() {
-            if (!p) return 0;
-            return this == p->l ? -1 : this == p->r ? 1 : 0;
+        void pull() {
+            sum = val;
+            if (l) sum = TreeDP::rake(sum, l->sum);
+            if (r) sum = TreeDP::rake(sum, r->sum);
         }
-        ptr &ch(bool d) { return !d ? l : r; }
-        ptr rightmost() {
-            ptr cur = this;
+
+        rptr &ch(bool d) { return !d ? l : r; }
+        static int state(rptr t) {
+            if (!t->p) return 0;
+            return t == t->p->l ? -1 : 1;
+        }
+        static void attach(rptr p, bool d, rptr c) {
+            if (c) c->p = p;
+            p->ch(d) = c, p->pull();
+        }
+        static void rot(rptr t) {
+            rptr p = t->p;
+            int d = state(t) == 1, dp = state(p);
+            t->p = p->p;
+            if (dp) attach(p->p, dp == 1, t);
+            attach(p, d, t->ch(!d));
+            attach(t, !d, p);
+        }
+        static void splay(rptr t) {
+            for (; state(t); rot(t))
+                if (state(t->p)) state(t) == state(t->p) ? rot(t->p) : rot(t);
+        }
+
+        rptr rightmost() {
+            rptr cur = this;
             while (cur->r) cur = cur->r;
             return cur;
         }
-        void pull() {
-            sum = key;
-            if (l) sum = TreeDP::rake(sum, l);
-            if (r) sum = TreeDP::rake(sum, r);
-        }
-        void attach(ptr c, bool d) {
-            if (c) c->p = this;
-            p->ch(d) = c, pull();
-        }
-        void rot() {
-            int d = state() == 1, dp = p->state();
-            p = p->p;
-            if (dp) p->p->attach(dp == 1, this);
-            p->attach(ch(!d), d);
-            attach(p, !d);
-        }
-        void splay() {
-            for (; state(); rot())
-                if (p->state()) state() == p->state() ? p->rot() : rot();
-        }
-
-        static ptr insert(ptr t, const Point &x) {
-            ptr z = new splay_node(x);
+        friend rptr insert(rptr t, const Point &x) {
+            rptr z = new rake_node(x);
             if (!t) return z;
-            t = t->rightmost();
-            t->r = z, t->pull();
-            return z->splay(), z;
+            splay(t = t->rightmost());
+            t->r = z, z->p = t;
+            t->pull();
+            return splay(z), z;
         }
-        static ptr erase(ptr t) {
-            t->splay();
-            ptr l = t->l, r = t->r;
+        friend rptr erase(rptr t) {
+            splay(t);
+            rptr l = t->l, r = t->r;
             delete t;
             if (!l) {
                 t = r;
                 if (t) t->p = 0;
             } else if (!r) {
-                t = l;
-                t->p = 0;
+                t = l, t->p = 0;
             } else {
-                l->p = 0;
-                t = l->rightmost();
-                t->splay();
+                splay(t = l->rightmost());
                 t->r = r, r->p = t;
                 t->pull();
             }
             return t;
         }
     };
+<<<<<<< HEAD
     struct node : lct_node<node> {
         using base = lct_node<node>;
         using base::base, base::l, base::r;
@@ -118,11 +129,28 @@ template<class TreeDP> struct TopTree {
         Info info;
         Path sum, mus;
         splay_node *light = 0, *point = 0;
+||||||| parent of c33a460 (finish top tree, has huge constants though...)
+    struct node : lct_node<node> {
+        using base = lct_node<node>;
+        using base::l, base::r;
+
+        using ptr = node *;
+        Info info;
+        Path sum, mus;
+        splay_node *light = 0, *point = 0;
+=======
+    struct node {
+        ptr p = 0, l = 0, r = 0;
+        bool rev = 0;
+        Info info{};
+        Path sum{}, mus{};
+        rake_node *light = 0, *point = 0;
+>>>>>>> c33a460 (finish top tree, has huge constants though...)
 
         void pull() {
-            Path sub = light ? TreeDP::add_vertex(light->sum, info)
-                             : TreeDP::vertex(info);
-            sum = mus = sub;
+            Point raked = light ? TreeDP::add_vertex(light->sum, info)
+                                : TreeDP::vertex(info);
+            sum = mus = raked;
             if (l) {
                 sum = TreeDP::compress(l->sum, sum);
                 mus = TreeDP::compress(mus, l->mus);
@@ -132,37 +160,80 @@ template<class TreeDP> struct TopTree {
                 mus = TreeDP::compress(r->mus, mus);
             }
         }
-        void flip() { swap(sum, mus); }
-        void add_light(ptr c) {
-            light = light->insert(TreeDP::add_edge(c->sum));
-            c->point = light;
+        void flip() { swap(l, r), swap(sum, mus), rev ^= 1; }
+        void push() {
+            if (exchange(rev, 0)) {
+                if (l) l->flip();
+                if (r) r->flip();
+            }
         }
-        void sub_light(ptr c) {
-            c->_push();
-            light = light->erase(c->point);
+
+        ptr &ch(bool d) { return !d ? l : r; }
+        friend void attach(ptr p, bool d, ptr c) {
+            if (c) c->p = p;
+            p->ch(d) = c, p->pull();
+        }
+        static int state(ptr t) {
+            if (!t->p) return 0;
+            return t == t->p->l ? -1 : t == t->p->r ? 1 : 0;
+        }
+        static void rot(ptr t) {
+            ptr p = t->p;
+            int d = state(t) == 1, dp = state(p);
+            t->p = p->p;
+            if (dp) attach(p->p, dp == 1, t);
+            attach(p, d, t->ch(!d));
+            attach(t, !d, p);
+        }
+        static void splay(ptr t) {
+            t->push();
+            {
+                ptr cur = t;
+                while (state(cur)) cur = cur->p;
+                t->point = cur->point;
+                if (t != cur) cur->point = 0;
+            }
+            for (; state(t); rot(t)) {
+                ptr p = t->p, g = p->p;
+                if (g) g->push();
+                p->push(), t->push();
+                if (state(p)) rot(state(t) == state(p) ? p : t);
+            }
         }
     };
-    using ptr = typename node::ptr;
+
     static ptr expose(ptr t) {
-        ptr cur = t;
-        while (!cur->state()) cur = cur->p;
-        t->point = cur->point;
-        if (t != cur) cur->point = 0;
-        LCT<node>::expose(t);
+        ptr prv = 0;
+        for (ptr cur = t; cur; cur = cur->p) {
+            node::splay(cur);
+            if (cur->r) {
+                cur->light = insert(cur->light, TreeDP::add_edge(cur->r->sum));
+                cur->r->point = cur->light;
+            }
+            if (prv) {
+                prv->push();
+                cur->light = erase(prv->point);
+            }
+            attach(cur, 1, exchange(prv, cur));
+        }
+        node::splay(t);
+        return prv;
     }
-    static void evert(ptr t) { expose(t), t->_flip(); }
+    static void evert(ptr t) { expose(t), t->flip(); }
     static void link(ptr v, ptr p) {
         evert(v), expose(p);
-        assert(!v->p && !p->r);
-        LCT<node>::attach(p, 1, v);
+        assert(!p->r);
+        attach(p, 1, v);
     }
-    static void cut(ptr v, ptr p) {
-        evert(p), expose(v);
-        assert(!v->p && v->l == p);
-        attach(v, 0, p->p = 0);
+    static void cut(ptr v) {
+        expose(v);
+        assert(v->l);
+        attach(v, 0, v->l->p = 0);
     }
-    static bool connected(ptr u, ptr v) {
-        expose(u), expose(v);
-        return u == v || u->p;
+    static ptr lca(ptr u, ptr v) {
+        if (u == v) return u;
+        expose(u);
+        ptr l = expose(v);
+        return u->p ? l : 0;
     }
 };
