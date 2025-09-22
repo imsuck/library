@@ -38,15 +38,16 @@ template<class node> struct LCT {
             if (state(p)) rot(state(t) == state(p) ? p : t);
         }
     }
-    static void expose(ptr t) {
-        ptr prv = 0, cur = t;
-        for (; cur; cur = cur->p) {
+    static ptr expose(ptr t) {
+        ptr prv = 0;
+        for (ptr cur = t; cur; cur = cur->p) {
             splay(cur);
             if (cur->r) cur->_add_light(cur->r);
             if (prv) cur->_sub_light(prv);
             attach(cur, 1, exchange(prv, cur));
         }
         splay(t);
+        return prv;
     }
     static void evert(ptr t) { expose(t), t->_flip(); }
     static void link(ptr v, ptr p) {
@@ -61,10 +62,9 @@ template<class node> struct LCT {
     }
     static ptr lca(ptr u, ptr v) {
         if (u == v) return u;
-        expose(u), expose(v);
-        if (!u->p) return 0;
-        splay(u);
-        return u->p ?: u;
+        expose(u);
+        ptr l = expose(v);
+        return u->p ? l : 0;
     }
 
     static ptr &ch(ptr t, bool d) { return d ? t->r : t->l; }
