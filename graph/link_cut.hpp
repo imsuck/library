@@ -113,8 +113,9 @@ template<class node> struct lct_node {
     void _sub_light(ptr c) {
         if constexpr (has_sub_light<node>) as_derived()->sub_light(c);
     }
-    void _change_light(ptr p, ptr c) {
-        if constexpr (has_change_light<node>) as_derived()->change_light(p, c);
+    void _change_light(ptr prv, ptr cur) {
+        if constexpr (has_change_light<node>)
+            as_derived()->change_light(prv, cur);
     }
 
 // rip compile time

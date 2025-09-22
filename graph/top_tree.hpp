@@ -5,7 +5,7 @@ using namespace std;
 #include "../other/st_alloc.hpp"
 #include "link_cut.hpp"
 
-// https://ei1333.github.io/library/structure/dynamic-tree/top-tree.hpp
+// reference: https://ei1333.github.io/library/structure/dynamic-tree/top-tree.hpp
 template<class TreeDP> struct TopTree {
     using Info = typename TreeDP::Info;
     using Point = typename TreeDP::Point;
@@ -112,7 +112,7 @@ template<class TreeDP> struct TopTree {
     };
     struct node : lct_node<node> {
         using base = lct_node<node>;
-        using base::l, base::r;
+        using base::base, base::l, base::r;
 
         using ptr = node *;
         Info info;
