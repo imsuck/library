@@ -1,4 +1,10 @@
-#pragma once
+#line 1 "test/yosupo/tree/dynamic_tree_vertex_set_path_composite_top_tree.test.cpp"
+#define PROBLEM "https://judge.yosupo.jp/problem/dynamic_tree_vertex_set_path_composite"
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#line 2 "graph/top_tree.hpp"
 
 // reference:
 // https://ei1333.github.io/library/structure/dynamic-tree/top-tree.hpp
@@ -217,3 +223,138 @@ template<class TreeDP> struct TopTree {
         return u->p ? l : 0;
     }
 };
+#line 2 "math/modint.hpp"
+
+// clang-format off
+template<uint32_t m> struct modint {
+    static_assert(m >= 1, "Modulus must be in the range [1;2^31)");
+
+    using mint = modint;
+    static constexpr bool is_simple = true;
+
+    static constexpr uint32_t mod() noexcept { return m; }
+    constexpr modint() noexcept = default;
+    constexpr modint(int64_t v) noexcept : _v(uint32_t((v %= m) < 0 ? v + m : v)) {}
+    constexpr static mint raw(uint32_t v) noexcept { mint x; return x._v = v, x; }
+    template<class T> constexpr explicit operator T() const noexcept { return _v; }
+
+    constexpr mint &operator++() noexcept { return _v = ++_v == mod() ? 0 : _v, *this; }
+    constexpr mint &operator--() noexcept { --(_v ? _v : _v = mod()); return *this; }
+    constexpr mint operator++(int) noexcept { return exchange(*this, ++mint(*this)); }
+    constexpr mint operator--(int) noexcept { return exchange(*this, --mint(*this)); }
+
+    constexpr mint &operator+=(mint rhs) noexcept {
+        return _v = int(_v += rhs._v - mod()) < 0 ? _v + mod() : _v, *this;
+    }
+    constexpr mint &operator-=(mint rhs) noexcept {
+        return _v = int(_v -= rhs._v) < 0 ? _v + mod() : _v, *this;
+    }
+    constexpr mint &operator*=(mint rhs) noexcept {
+        return _v = uint64_t(_v) * rhs._v % mod(), *this;
+    }
+    constexpr mint &operator/=(mint rhs) noexcept {
+        return *this = *this * rhs.inv();
+    }
+
+    constexpr friend mint operator+(mint l, mint r) noexcept { return l += r; }
+    constexpr friend mint operator-(mint l, mint r) noexcept { return l -= r; }
+    constexpr friend mint operator*(mint l, mint r) noexcept { return l *= r; }
+    constexpr friend mint operator/(mint l, mint r) noexcept { return l /= r; }
+
+    constexpr mint operator+() const noexcept { return *this; }
+    constexpr mint operator-() const noexcept { return raw(_v ? mod() - _v : 0); }
+
+    constexpr friend bool operator==(mint l, mint r) noexcept { return l._v == r._v; }
+    constexpr friend bool operator!=(mint l, mint r) noexcept { return l._v != r._v; }
+    constexpr friend bool operator<(mint l, mint r) noexcept { return l._v < r._v; }
+
+    constexpr mint pow(uint64_t n) const noexcept {
+        mint b = *this, res = 1;
+        while (n) n & 1 ? res *= b : 0, b *= b, n >>= 1;
+        return res;
+    }
+
+    constexpr mint inv() const noexcept {
+        int a = _v, b = mod(), x = 1, y = 0;
+        while (b) {
+            x = exchange(y, x - a / b * y);
+            a = exchange(b, a % b);
+        }
+        assert(a == 1);
+        return x;
+    }
+
+    friend istream &operator>>(istream &is, mint &x) {
+        int64_t v{};
+        return is >> v, x = v, is;
+    }
+    friend ostream &operator<<(ostream &os, const mint &x) { return os << x._v; }
+
+  private:
+    uint32_t _v = 0;
+};
+using modint107 = modint<1'000'000'007>;
+using modint998 = modint<998'244'353>;
+// clang-format on
+#line 2 "other/types.hpp"
+
+using i8 = int8_t;
+using u8 = uint8_t;
+using i32 = int32_t;
+using u32 = uint32_t;
+using i64 = int64_t;
+using u64 = uint64_t;
+using f32 = float;
+using f64 = double;
+using f80 = long double;
+using str = string;
+template<class T> using vec = vector<T>;
+template<class E = i32> using graph = vec<vec<E>>;
+#line 9 "test/yosupo/tree/dynamic_tree_vertex_set_path_composite_top_tree.test.cpp"
+
+using mint = modint998;
+
+struct TreeDP {
+    struct Info {
+        mint a, b;
+    };
+    struct Point {};
+    struct Path {
+        mint a, b;
+    };
+    static Path vertex(Info x) { return {x.a, x.b}; }
+    static Path add_vertex(Point, Info) { return {1, 0}; }
+    static Point add_edge(Path t) { return {}; }
+    static Path compress(Path p, Path c) {
+        return {c.a * p.a, c.a * p.b + c.b};
+    }
+    static Point rake(Point, Point) { return {}; }
+};
+
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
+    i32 n, q;
+    cin >> n >> q;
+    vector<TreeDP::Info> a(n);
+    for (auto &[b, c] : a) cin >> b >> c;
+    TopTree<TreeDP> tr(a);
+    for (i32 i = 0, u, v; i < n - 1; i++) cin >> u >> v, tr.link(u, v);
+    while (q--) {
+        i32 t;
+        cin >> t;
+        if (t == 0) {
+            i32 a, b, c, d;
+            cin >> a >> b >> c >> d;
+            tr.cut(a, b), tr.link(c, d);
+        } else if (t == 1) {
+            i32 p, c, d;
+            cin >> p >> c >> d;
+            tr.set(p, {c, d});
+        } else {
+            i32 u, v, x;
+            cin >> u >> v >> x;
+            auto [a, b] = tr.fold_path(u, v);
+            cout << a * x + b << "\n";
+        }
+    }
+}
