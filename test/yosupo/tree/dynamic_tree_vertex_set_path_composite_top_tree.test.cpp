@@ -18,7 +18,7 @@ struct TreeDP {
         mint a, b;
     };
     static Path vertex(Info x) { return {x.a, x.b}; }
-    static Path add_vertex(Point, Info) { return {1, 0}; }
+    static Path add_vertex(Point, Info x) { return {x.a, x.b}; }
     static Point add_edge(Path t) { return {}; }
     static Path compress(Path p, Path c) {
         return {c.a * p.a, c.a * p.b + c.b};
