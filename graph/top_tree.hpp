@@ -11,7 +11,9 @@ template<class TreeDP> struct TopTree {
     using ptr = node *;
     vector<node> nodes;
 
-    TopTree(int n = 0) : nodes(n) { for (int i = 0; i < n; i++); }
+    TopTree(int n = 0) : nodes(n) {
+        for (int i = 0; i < n; i++) nodes[i].id = i;
+    }
     TopTree(const vector<Info> &v) : nodes(v.size()) {
         for (int i = 0; i < v.size(); i++) {
             nodes[i].id = i;

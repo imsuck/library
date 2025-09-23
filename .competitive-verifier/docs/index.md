@@ -1,7 +1,7 @@
 C++ version: C++17
 
 <details>
-  <summary>Referenced libaries</summary>
+  <summary>Referenced libraries</summary>
     
   <ul>
     <li>[beet](https://beet-aizu.github.io/library/)</li>
