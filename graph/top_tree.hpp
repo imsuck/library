@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../other/st_alloc.hpp"
-
 // reference:
 // https://ei1333.github.io/library/structure/dynamic-tree/top-tree.hpp
 template<class TreeDP> struct TopTree {
@@ -19,6 +17,17 @@ template<class TreeDP> struct TopTree {
             nodes[i].id = i;
             nodes[i].info = v[i];
             nodes[i].pull();
+        }
+    }
+    ~TopTree() {
+        for (auto &n : nodes) {
+            auto del = [](auto f, auto t) {
+                if (!t) return;
+                f(f, t->l), f(f, t->r);
+                delete t;
+            };
+            del(del, n.light);
+            n.light = n.point = 0;
         }
     }
 
@@ -53,13 +62,12 @@ template<class TreeDP> struct TopTree {
     }
     Path fold_subtree(int v, int r) { return evert(r), fold_subtree(v); }
 
-    struct rake_node : st_alloc<rake_node> {
+    struct rake_node {
         using rptr = rake_node *;
         rptr p = 0, l = 0, r = 0;
         Point val{}, sum{};
 
-        rake_node() {}
-        rake_node(const Point &x) : p(0), l(0), r(0), val(x), sum(x) {}
+        rake_node(const Point &x) : val(x), sum(x) {}
 
         void pull() {
             sum = val;
@@ -68,25 +76,19 @@ template<class TreeDP> struct TopTree {
         }
 
         rptr &ch(bool d) { return !d ? l : r; }
-        static int state(rptr t) {
-            if (!t->p) return 0;
-            return t == t->p->l ? -1 : 1;
-        }
-        static void attach(rptr p, bool d, rptr c) {
-            if (c) c->p = p;
-            p->ch(d) = c, p->pull();
-        }
+        static bool dir(rptr t) { return t == t->p->r; }
         static void rot(rptr t) {
             rptr p = t->p;
-            int d = state(t) == 1, dp = state(p);
+            int d = dir(t);
             t->p = p->p;
-            if (dp) attach(p->p, dp == 1, t);
-            attach(p, d, t->ch(!d));
-            attach(t, !d, p);
+            if (p->p) p->p->ch(dir(p)) = t;
+            if ((p->ch(d) = t->ch(!d))) p->ch(d)->p = p;
+            t->ch(!d) = p, p->p = t;
+            p->pull(), t->pull();
         }
         static void splay(rptr t) {
-            for (; state(t); rot(t))
-                if (state(t->p)) state(t) == state(t->p) ? rot(t->p) : rot(t);
+            for (; t->p; rot(t))
+                if (t->p->p) dir(t) == dir(t->p) ? rot(t->p) : rot(t);
         }
 
         rptr rightmost() {
@@ -106,11 +108,12 @@ template<class TreeDP> struct TopTree {
             splay(t);
             rptr l = t->l, r = t->r;
             delete t;
+            if (l) l->p = 0;
+            if (r) r->p = 0;
             if (!l) {
                 t = r;
-                if (t) t->p = 0;
             } else if (!r) {
-                t = l, t->p = 0;
+                t = l;
             } else {
                 splay(t = l->rightmost());
                 t->r = r, r->p = t;
@@ -121,10 +124,11 @@ template<class TreeDP> struct TopTree {
     };
     struct node {
         ptr p = 0, l = 0, r = 0;
+        rake_node *light = 0, *point = 0;
+        int id;
         bool rev = 0;
         Info info{};
         Path sum{}, mus{};
-        rake_node *light = 0, *point = 0;
 
         void pull() {
             Point raked = light ? TreeDP::add_vertex(light->sum, info)
@@ -148,35 +152,32 @@ template<class TreeDP> struct TopTree {
         }
 
         ptr &ch(bool d) { return !d ? l : r; }
-        friend void attach(ptr p, bool d, ptr c) {
-            if (c) c->p = p;
-            p->ch(d) = c, p->pull();
+        static bool is_root(ptr t) {
+            return !t->p || (t != t->p->l && t != t->p->r);
         }
-        static int state(ptr t) {
-            if (!t->p) return 0;
-            return t == t->p->l ? -1 : t == t->p->r ? 1 : 0;
-        }
+        static bool dir(ptr t) { return t == t->p->r; }
         static void rot(ptr t) {
             ptr p = t->p;
-            int d = state(t) == 1, dp = state(p);
+            int d = dir(t);
             t->p = p->p;
-            if (dp) attach(p->p, dp == 1, t);
-            attach(p, d, t->ch(!d));
-            attach(t, !d, p);
+            if (!is_root(p)) p->p->ch(dir(p)) = t;
+            if ((p->ch(d) = t->ch(!d))) p->ch(d)->p = p;
+            t->ch(!d) = p, p->p = t;
+            p->pull(), t->pull();
         }
         static void splay(ptr t) {
             t->push();
             {
                 ptr cur = t;
-                while (state(cur)) cur = cur->p;
+                while (!is_root(cur)) cur = cur->p;
                 t->point = cur->point;
                 if (t != cur) cur->point = 0;
             }
-            for (; state(t); rot(t)) {
+            for (; !is_root(t); rot(t)) {
                 ptr p = t->p, g = p->p;
                 if (g) g->push();
                 p->push(), t->push();
-                if (state(p)) rot(state(t) == state(p) ? p : t);
+                if (!is_root(p)) rot(dir(t) == dir(p) ? p : t);
             }
         }
     };
@@ -193,7 +194,7 @@ template<class TreeDP> struct TopTree {
                 prv->push();
                 cur->light = erase(prv->point);
             }
-            attach(cur, 1, exchange(prv, cur));
+            cur->r = exchange(prv, cur), cur->pull();
         }
         node::splay(t);
         return prv;
@@ -202,12 +203,12 @@ template<class TreeDP> struct TopTree {
     static void link(ptr v, ptr p) {
         evert(v), expose(p);
         assert(!p->r);
-        attach(p, 1, v);
+        p->r = v, v->p = p, p->pull();
     }
     static void cut(ptr v) {
         expose(v);
         assert(v->l);
-        attach(v, 0, v->l->p = 0);
+        v->l = v->l->p = 0, v->pull();
     }
     static ptr lca(ptr u, ptr v) {
         if (u == v) return u;

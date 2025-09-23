@@ -12,8 +12,12 @@ namespace timer {
         last = now;
         if (msg.size() && !final) comp[msg] += delta;
 
-        if (final)
-            for (auto &[k, v] : comp) cerr << k << ": " << v * 1e-3L << " ms\n";
+        if (final) {
+            long double tot = 0;
+            for (auto &[k, v] : comp)
+                tot += v * 1e-3L, cerr << k << ": " << v * 1e-3L << " ms\n";
+            cerr << "total: " << tot << " ms\n";
+        }
 #endif
     }
 } // namespace timer
