@@ -46,7 +46,7 @@ template<class T, int bit_num = numeric_limits<T>::digits>
 struct WaveletMatrix {
     WaveletMatrix() = default;
     explicit WaveletMatrix(const vector<T> &a) :
-        WaveletMatrix(a.size(), [&](int i) { return a[i]; }) {}
+        WaveletMatrix((int)a.size(), [&](int i) { return a[i]; }) {}
     template<class Gen> WaveletMatrix(int _n, Gen gen) : n(_n) {
         vector<T> a(n), l(n), r(n);
         for (int i = 0; i < n; i++) a[i] = gen(i);

@@ -120,7 +120,7 @@ template<class M> struct LazyETT {
         p = vert(v), p->val = x;
         for (pull(p); p->p;) pull(p = p->p);
     }
-    T prod(int v, int p) {
+    T subtree_prod(int v, int p) {
         if (p != -1) cut(p, v);
         T ret = root(vert(v))->sm;
         if (p != -1) link(p, v);

@@ -5,7 +5,7 @@ documentation_of: //ds/hashmap.hpp
 
 ## Note
 By default `hash_map` and `hash_set` does not support `std::pair`, `std::tuple`, etc.
-use [custom hash]({{ site.baseurl }}/other/chash.hpp) if you want to store them.
+Use [custom hash]({{ site.baseurl }}/other/chash.hpp) if you want to store them.
 
 ## `hash_map`
 ### Operations
