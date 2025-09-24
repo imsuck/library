@@ -4,12 +4,10 @@ template<class node> struct LCT {
     using ptr = node *;
     vector<node> nodes;
 
-    LCT(int n = 0) {
-        nodes.reserve(n);
-        for (int i = 0; i < n; i++) nodes.emplace_back(i);
-    }
+    LCT(int n = 0) : nodes(n) {}
 
     auto operator[](int i) { return &nodes[i]; }
+    int id(ptr t) { return t - &nodes[0]; }
 
     void splay(int v) { splay(&nodes[v]); }
     void expose(int v) { expose(&nodes[v]); }
@@ -19,7 +17,7 @@ template<class node> struct LCT {
     void cut(int v, int p) { cut(&nodes[v], &nodes[p]); }
     int lca(int u, int v) {
         ptr l = lca(&nodes[u], &nodes[v]);
-        return l ? l->id : -1;
+        return l ? id(l) : -1;
     }
     template<class... T> void set(int v, T &&...x) {
         expose(v), nodes[v].set(x...);
@@ -91,9 +89,7 @@ template<class node> struct lct_node {
         return t ?: &nil;
     }
     ptr p = 0, l = 0, r = 0;
-    int id = -1;
     bool rev = 0;
-    lct_node(int i = -1) : id(i) {}
 
     node *as_derived() { return (node *)this; };
     void _push() {

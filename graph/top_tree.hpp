@@ -11,12 +11,9 @@ template<class TreeDP> struct TopTree {
     using ptr = node *;
     vector<node> nodes;
 
-    TopTree(int n = 0) : nodes(n) {
-        for (int i = 0; i < n; i++) nodes[i].id = i;
-    }
+    TopTree(int n = 0) : nodes(n) {}
     TopTree(const vector<Info> &v) : nodes(v.size()) {
         for (int i = 0; i < v.size(); i++) {
-            nodes[i].id = i;
             nodes[i].info = v[i];
             nodes[i].pull();
         }
@@ -34,6 +31,7 @@ template<class TreeDP> struct TopTree {
     }
 
     auto operator[](int i) { return &nodes[i]; }
+    int id(ptr t) { return int(t - &nodes[0]); }
 
     void splay(int v) { splay(&nodes[v]); }
     void expose(int v) { expose(&nodes[v]); }
@@ -49,7 +47,7 @@ template<class TreeDP> struct TopTree {
     }
     int lca(int u, int v) {
         ptr l = lca(&nodes[u], &nodes[v]);
-        return l ? l->id : -1;
+        return l ? id(l) : -1;
     }
     Path fold(int v) { return evert(v), nodes[v].sum; }
     Path fold_path(int v) { return expose(v), nodes[v].sum; }
@@ -127,7 +125,6 @@ template<class TreeDP> struct TopTree {
     struct node {
         ptr p = 0, l = 0, r = 0;
         rake_node *light = 0, *point = 0;
-        int id;
         bool rev = 0;
         Info info{};
         Path sum{}, mus{};
