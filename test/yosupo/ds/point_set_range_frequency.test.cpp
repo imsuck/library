@@ -16,8 +16,8 @@ template<class T> struct PointSetRangeFreq {
         s.erase({a[p], p});
         s.insert({a[p] = x, p});
     }
-    int query(int l, int r, T x) {
-        return s.order_of({x, r}) - s.order_of({x, l}, false);
+    int freq(int l, int r, T x) {
+        return s.order_of({x, r}, false) - s.order_of({x, l}, false);
     }
 };
 
@@ -38,7 +38,7 @@ int main() {
         } else {
             int l, r, x;
             cin >> l >> r >> x;
-            cout << rf.query(l, r, x) << "\n";
+            cout << rf.freq(l, r, x) << "\n";
         }
     }
 }
