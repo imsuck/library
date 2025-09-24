@@ -12,7 +12,7 @@ placeholding).
   + Construct disjoint sparse table
   + Time complexity: $\mathcal O(n \log n)$
 - `T prod(int l, int r)`
-  + Returns the product of the range $[l, r)$
+  + Returns the product of the range `[l, r)`
   + Time complexity: $\mathcal O(1)$
 
 ## Example

@@ -57,6 +57,8 @@ template<class M> struct LazySegTree {
         return M::op(sml, smr);
     }
 
+    T pref(int r) { return (*this)(0, r); }
+    T suff(int l) { return (*this)(l, n); }
     T prod(int l, int r) { return (*this)(l, r); }
     T all_prod() const { return t[1]; }
 
