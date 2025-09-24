@@ -18,17 +18,6 @@ template<class TreeDP> struct TopTree {
             nodes[i].pull();
         }
     }
-    ~TopTree() {
-        for (auto &n : nodes) {
-            auto del = [](auto f, auto t) {
-                if (!t) return;
-                f(f, t->l), f(f, t->r);
-                delete t;
-            };
-            del(del, n.light);
-            n.light = n.point = 0;
-        }
-    }
 
     auto operator[](int i) { return &nodes[i]; }
     int id(ptr t) { return int(t - &nodes[0]); }
@@ -128,6 +117,16 @@ template<class TreeDP> struct TopTree {
         bool rev = 0;
         Info info{};
         Path sum{}, mus{};
+
+        ~node() {
+            auto del = [](auto f, auto t) {
+                if (!t) return;
+                f(f, t->l), f(f, t->r);
+                delete t;
+            };
+            del(del, light);
+        }
+
 
         void pull() {
             Path raked = light ? TreeDP::add_vertex(light->sum, info)
