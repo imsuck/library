@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./bst_base.hpp"
+#include "bst_base.hpp"
 
 namespace treap {
     template<class T> using key_t = decltype(declval<T>().key);

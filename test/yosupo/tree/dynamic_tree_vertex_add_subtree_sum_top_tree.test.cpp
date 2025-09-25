@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "graph/top_tree.hpp"
+#include "tree/top_tree.hpp"
 #include "other/types.hpp"
 
 struct TreeDP {

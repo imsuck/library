@@ -4,7 +4,7 @@ documentation_of: //ds/lazysegtree.hpp
 ---
 
 ## Description
-Handle range queries with range updates under a monoid.
+Handle range queries with range updates under a monoid. Example monoid:
 ```cpp
 struct RangeAffineRangeSum {
   using T = array<int, 2>;

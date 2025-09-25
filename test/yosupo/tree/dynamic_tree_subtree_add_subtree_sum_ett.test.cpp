@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "graph/lazy_ett.hpp"
+#include "tree/lazy_ett.hpp"
 #include "other/types.hpp"
 
 struct M {

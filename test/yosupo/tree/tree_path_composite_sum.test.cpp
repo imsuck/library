@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "graph/rerooting.hpp"
+#include "tree/rerooting.hpp"
 #include "math/modint.hpp"
 
 using mint = modint998;

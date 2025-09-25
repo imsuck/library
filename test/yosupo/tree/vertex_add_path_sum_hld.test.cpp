@@ -4,7 +4,7 @@
 using namespace std;
 
 #include "ds/segtree.hpp"
-#include "graph/hld.hpp"
+#include "tree/hld.hpp"
 #include "other/types.hpp"
 
 struct M {

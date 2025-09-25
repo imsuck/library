@@ -4,8 +4,7 @@ documentation_of: //ds/segtree.hpp
 ---
 
 ## Description
-Handle range queries with point updates under a monoid.
-Example monoid:
+Handle range queries with point updates under a monoid. Example monoid:
 ```cpp
 struct Sum {
   using T = int;

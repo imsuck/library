@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "graph/link_cut.hpp"
+#include "tree/link_cut.hpp"
 #include "other/types.hpp"
 
 struct node : lct_node<node> {

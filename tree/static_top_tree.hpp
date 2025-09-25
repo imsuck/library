@@ -1,6 +1,6 @@
 #pragma once
 
-#include "other/y_combinator.hpp"
+#include "../other/y_combinator.hpp"
 
 enum Type : char { Vertex, AddVertex, AddEdge, Compress, Rake };
 template<class G> struct STT {

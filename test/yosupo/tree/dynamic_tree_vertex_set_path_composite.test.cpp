@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "graph/link_cut.hpp"
+#include "tree/link_cut.hpp"
 #include "math/modint.hpp"
 #include "other/types.hpp"
 

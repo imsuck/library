@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "graph/ett.hpp"
+#include "tree/ett.hpp"
 #include "other/types.hpp"
 
 struct M {

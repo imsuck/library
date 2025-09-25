@@ -4,7 +4,7 @@
 using namespace std;
 
 #include "graph/csr.hpp"
-#include "graph/hld.hpp"
+#include "tree/hld.hpp"
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
