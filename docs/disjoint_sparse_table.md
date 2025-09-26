@@ -4,8 +4,8 @@ documentation_of: //ds/disjoint_sparse_table.hpp
 ---
 
 ## Description
-Handle static range queries under a semi-group (identity element for
-placeholding).
+Disjoint sparse table efficiently handles static range queries under a semi-group
+(identity element for placeholding).
 
 ## Operations
 - `DisjointSparseTable<M>(const vector<T> &v)`

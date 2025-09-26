@@ -16,24 +16,30 @@ struct edge {
 };
 
 struct TreeDP {
-    using Info = array<mint, 3>; // a, b, c
-    using Point = array<mint, 2>; // sum, size
-    using Path = array<mint, 4>; // sum, size, b, c (for f(x) = bx + c)
-    static Path vertex(Info x) { return {x[0] * x[1] + x[2], 1, x[1], x[2]}; }
+    struct Info {
+        mint a, b, c;
+    };
+    struct Point {
+        mint sum, sz;
+    };
+    struct Path {
+        mint sum, sz, b, c;
+    };
+    static Path vertex(Info x) { return {x.b * x.a + x.c, 1, x.b, x.c}; }
     static Path add_vertex(Point t, Info x) {
-        return {(x[0] + t[0]) * x[1] + (1 + t[1]) * x[2], 1 + t[1], x[1], x[2]};
+        return {x.b * (x.a + t.sum) + x.c * (1 + t.sz), 1 + t.sz, x.b, x.c};
     }
-    static Point add_edge(Path t) { return {t[0], t[1]}; }
+    static Point add_edge(Path t) { return {t.sum, t.sz}; }
     // how does child affect the top boundary vertex?
     static Path compress(Path p, Path c) {
         return {
-            p[0] + c[0] * p[2] + c[1] * p[3],
-            p[1] + c[1],
-            p[2] * c[2],
-            p[2] * c[3] + p[3]
+            p.sum + p.b * c.sum + p.c * c.sz,
+            p.sz + c.sz,
+            p.b * c.b,
+            p.b * c.c + p.c
         };
     }
-    static Point rake(Point l, Point r) { return {l[0] + r[0], l[1] + r[1]}; }
+    static Point rake(Point l, Point r) { return {l.sum + r.sum, l.sz + r.sz}; }
 };
 
 int main() {
@@ -69,14 +75,14 @@ int main() {
         cin >> op;
         if (op == 0) {
             cin >> x >> y;
-            ddp.info[x][0] = y;
+            ddp.info[x].a = y;
             ddp.pull_from(x);
         } else {
             cin >> x >> y >> z;
             int v = e_v[x];
-            ddp.info[v][1] = y, ddp.info[v][2] = z;
+            ddp.info[v].b = y, ddp.info[v].c = z;
             ddp.pull_from(v);
         }
-        cout << ddp.query()[0] << "\n";
+        cout << ddp.query().sum << "\n";
     }
 }

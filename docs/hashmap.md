@@ -10,7 +10,7 @@ Use [custom hash]({{ site.baseurl }}/other/chash.hpp) if you want to store them.
 ## `hash_map`
 ### Operations
 - `hash_map<K, V, Hash = std::hash<K>>()`
-  + Constructs hash map
+  + Construct hash map
   + Time complexity: $\mathcal O(1)$
 - `set_default(V v)`
   + Sets default value of values
@@ -30,7 +30,7 @@ Use [custom hash]({{ site.baseurl }}/other/chash.hpp) if you want to store them.
 ## `hash_set`
 ### Operations
 - `hash_set<K, Hash = std::hash<K>>()`
-  + Constructs hash set
+  + Construct hash set
   + Time complexity: $\mathcal O(1)$
 - `void insert(K k)`
   + Inserts `k` into the set

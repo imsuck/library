@@ -4,7 +4,7 @@ documentation_of: //ds/segtree.hpp
 ---
 
 ## Description
-Handle range queries with point updates under a monoid. Example monoid:
+Segment tree can handle range queries with point updates under a monoid in $\mathcal O(\log n)$ time. Example monoid:
 ```cpp
 struct Sum {
   using T = int;
@@ -15,7 +15,7 @@ struct Sum {
 
 ## Operations
 - `SegTree<M>(int n)`
-  + Constructs segment tree with identity elements
+  + Construct segment tree with identity elements
   + Time complexity: $\mathcal O(n)$
 - `SegTree<M>(const vector<T> &v)`
   + Constructs segment tree using `v`

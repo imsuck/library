@@ -8,7 +8,7 @@ A set which can perform order statistic queries.
 
 ## Operations
 - `ordered_set<T>(int n)`
-  + Constructs segment tree with identity elements
+  + Construct an ordered set
   + Time complexity: $\mathcal O(1)$
 - `void insert(T k)`
   + Inserts `k` into the set

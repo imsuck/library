@@ -4,8 +4,9 @@ documentation_of: //tree/hld.hpp
 ---
 
 ## Description
-Decomposition of a tree into heavy/light paths which allows for efficient path
-queries.
+Heavy-light decomposition decomposes a tree into heavy/light edges such that each
+path from a vertex to root goes through $\mathcal O(\log n)$ light edge. This
+allows efficient path queries.
 
 ## Operations
 - `HLD(G &g, int root = 0)`

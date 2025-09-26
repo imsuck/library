@@ -4,7 +4,8 @@ documentation_of: //ds/lazysegtree.hpp
 ---
 
 ## Description
-Handle range queries with range updates under a monoid. Example monoid:
+Lazy segment tree can handle range queries with range updates under a monoid in $\mathcal O(\log n)$ time.
+Example monoid:
 ```cpp
 struct RangeAffineRangeSum {
   using T = array<int, 2>;
@@ -23,7 +24,7 @@ struct RangeAffineRangeSum {
 
 ## Operations
 - `LazySegTree<M>(int n)`
-  + Constructs segment tree with identity elements
+  + Construct segment tree with identity elements
   + Time complexity: $\mathcal O(n)$
 - `LazySegTree<M>(const vector<T> &v)`
   + Constructs segment tree using `v`

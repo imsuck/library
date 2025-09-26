@@ -1,3 +1,5 @@
+#pragma once
+
 template<class TreeDP, class STT> struct DDP {
     using Info = typename TreeDP::Info;
     using Point = typename TreeDP::Point;
