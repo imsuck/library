@@ -1,10 +1,10 @@
 #pragma once
 
 /**
- * Convenient references:
+ * Convenient memo:
  *   Creating vertices:
- *     n->is_path = n->is_vert = true;
- *     n->pull();
+ *     n->val = ...;
+ *     n->set_vert();
  *
  *   Creating edges:
  *     link(e, va, vb);
@@ -12,7 +12,6 @@
  *   Updates:
  *     auto cur = get_path(va, vb); // or get_subtree(va, vb)
  *     cur->do_stuff();
- *     cur->push();
  *     cur->pull_all();
  *
  * Node types:
@@ -38,6 +37,7 @@ template<class node> struct top_tree_node_base {
 
   private:
     ptr as_derived() { return (ptr)this; }
+    auto as_derived() const { return (const ptr)this; }
 
   public:
     bool rev = false;
@@ -98,7 +98,7 @@ template<class node> struct top_tree_node_base {
     }
 
   private:
-    static void attach(ptr pa, int c_d, ptr ch) {
+    static inline void attach(ptr pa, int c_d, ptr ch) {
         pa->c[c_d] = ch;
         if (ch) ch->p = pa;
     }

@@ -61,8 +61,9 @@ int main() {
         if (op == 0) {
             int u, v, w, x;
             cin >> u >> v >> w >> x;
-            cut(es(u, v));
-            edges.erase(minmax(u, v));
+            auto it = edges.find(minmax(u, v));
+            cut(&it->second);
+            edges.erase(it);
             link(es(w, x), &vert[w], &vert[x]);
         } else if (op == 1) {
             int v, p, x;
