@@ -1,5 +1,38 @@
 #pragma once
 
+/**
+ * Convenient references:
+ *   Creating vertices:
+ *     n->is_path = n->is_vert = true;
+ *     n->pull();
+ *
+ *   Creating edges:
+ *     link(e, va, vb);
+ *
+ *   Updates:
+ *     auto cur = get_path(va, vb); // or get_subtree(va, vb)
+ *     cur->do_stuff();
+ *     cur->push();
+ *     cur->pull_all();
+ *
+ * Node types:
+ *   path edges: compress(c[0], self, c[1])
+ *     assert(is_path && !is_vert);
+ *     assert(c[0] && c[1]);
+ *     assert(c[0]->is_path && c[1]->is_path);
+ *     assert(!c[2]);
+ *   (path) vertices: self + rake(c[0], c[1])
+ *     assert(is_path && is_vert);
+ *     assert(!c[2]);
+ *     if (c[0]) assert(!c[0]->is_path);
+ *     if (c[1]) assert(!c[1]->is_path);
+ *   non-path edges: rake(c[0], self + c[2], c[1])
+ *     assert(!is_path && !is_vert);
+ *     assert(c[2])
+ *     assert(c[2]->is_path);
+ *     if (c[0]) assert(!c[0]->is_path);
+ *     if (c[1]) assert(!c[1]->is_path);
+ */
 template<class node> struct top_tree_node_base {
     using ptr = node *;
 
@@ -8,7 +41,7 @@ template<class node> struct top_tree_node_base {
 
   public:
     bool rev = false;
-    mutable ptr p = 0;
+    ptr p = 0;
     array<ptr, 3> c{0, 0, 0};
 
     int d() const {
@@ -21,7 +54,7 @@ template<class node> struct top_tree_node_base {
     ptr &p_c() { return p->c[d()]; }
 
     bool is_vert, is_path;
-    void set_vert() { is_path = is_vert = true; }
+    void set_vert() { is_path = is_vert = true, _pull(); }
 
     bool r() const { return !p || p->is_path != is_path; }
 
@@ -35,20 +68,21 @@ template<class node> struct top_tree_node_base {
     void _flip() {
         assert(is_path);
         swap(c[0], c[1]), rev ^= 1;
-        if constexpr (has_flip<node>) as_derived()->a();
+        if constexpr (has_flip<node>) as_derived()->flip();
     }
     void _push() {
-        if (exchange(rev, 0)) {
+        if (rev) {
             assert(is_path);
             if (!is_vert) {
                 c[0]->_flip();
                 c[1]->_flip();
             }
+            rev = false;
         }
-        if constexpr (has_push<node>) as_derived()->a();
+        if constexpr (has_push<node>) as_derived()->push();
     }
     void _pull() {
-        if constexpr (has_pull<node>) as_derived()->a();
+        if constexpr (has_pull<node>) as_derived()->pull();
     }
 
   public:
@@ -58,7 +92,8 @@ template<class node> struct top_tree_node_base {
     }
     ptr pull_all() {
         ptr cur = as_derived();
-        for (cur->_pull(); cur->p; cur->_pull()) cur = cur->p;
+        cur->_push(), cur->_pull();
+        for (; cur->p; cur->_pull()) cur = cur->p;
         return cur;
     }
 
@@ -80,7 +115,6 @@ template<class node> struct top_tree_node_base {
         this->p = pa->p;
 
         attach(pa, x, ch);
-
         attach(as_derived(), !x, pa);
 
         pa->_pull();
@@ -103,8 +137,7 @@ template<class node> struct top_tree_node_base {
         this->p = pa->p;
 
         attach(pa, x, ch);
-
-        attach(this->c[c_d], !x, pa);
+        attach(c[c_d], !x, pa);
 
         pa->_pull();
     }
@@ -116,13 +149,15 @@ template<class node> struct top_tree_node_base {
 
     void splay() {
         assert(!is_vert);
-        for (; !r(); rot()) p->d() == d() ? p->rot() : rot();
+        for (; !r(); rot())
+            if (!p->r()) p->d() == d() ? p->rot() : rot();
     }
 
     void splay2(int c_d) {
         assert(!is_vert && is_path);
         assert(c[c_d] && !c[c_d]->is_vert);
-        for (; !r(); rot2(c_d)) p->d() == d() ? p->rot() : rot2(c_d);
+        for (; !r(); rot2(c_d))
+            if (!p->r()) p->d() == d() ? p->rot() : rot2(c_d);
     }
 
     void splay2() {
@@ -179,8 +214,7 @@ template<class node> struct top_tree_node_base {
         attach(as_derived(), 1, pa);
         assert(!c[2]);
 
-        pa->_pull();
-        return pa;
+        return pa->_pull(), pa;
     }
 
     ptr splice_non_path() {
@@ -254,16 +288,18 @@ template<class node> struct top_tree_node_base {
     ptr meld_path_end() {
         assert(!p);
         ptr rt = as_derived();
-        for (;; rt = rt->c[1]) {
+        while (true) {
             rt->_push();
             if (rt->is_vert) break;
+            rt = rt->c[1];
         }
         rt->splay_vert();
         if (rt->c[0] && rt->c[1]) {
             ptr ch = rt->c[1];
-            for (;; ch = ch->c[0]) {
+            while (true) {
                 ch->_push();
                 if (!ch->c[0]) break;
+                ch = ch->c[0];
             }
             ch->splay();
             assert(!ch->c[0]);
@@ -297,8 +333,8 @@ template<class node> struct top_tree_node_base {
     friend void link(ptr e, ptr v, ptr p) {
         assert(e && v && p);
         assert(!e->c[0] && !e->c[1] && !e->c[2]);
-        v->expose(), p->evert();
-        while (v->p) v = v->p;
+        v->evert(), p->expose();
+        while (p->p) p = p->p;
 
         assert(!v->p);
         assert(!p->p);
@@ -328,20 +364,16 @@ template<class node> struct top_tree_node_base {
         return {l, r};
     }
 
-    friend ptr get_path(ptr u, ptr v) {
-        assert(u->is_vert && v->is_vert);
-        u->evert(), v->expose();
-        if (u == v) {
-            assert(!v->p);
-            return v;
-        }
+    friend ptr get_path(ptr v) {
+        assert(v->is_vert);
+        v->expose();
+        if (!v->p) return v;
         assert(!v->p->p);
         return v->p;
     }
 
-    friend ptr get_subtree(ptr rt, ptr v) {
-        rt->evert(), v->expose();
+    friend ptr get_subtree(ptr v) {
+        v->expose();
         return v;
     }
 };
-
