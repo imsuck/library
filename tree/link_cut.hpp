@@ -7,7 +7,7 @@ template<class node> struct LCT {
     LCT(int n = 0) : nodes(n) {}
 
     auto operator[](int i) { return &nodes[i]; }
-    int id(ptr t) { return t - &nodes[0]; }
+    int id(ptr t) { return int(t - &nodes[0]); }
 
     void splay(int v) { splay(&nodes[v]); }
     void expose(int v) { expose(&nodes[v]); }

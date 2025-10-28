@@ -337,12 +337,31 @@ template<class node> struct top_tree_node_base {
         while (p->p) p = p->p;
 
         assert(!v->p);
-        assert(!p->p);
 
         e->is_path = true, e->is_vert = false;
         attach(e, 0, p);
         attach(e, 1, v);
         e->_pull();
+    }
+
+    // Link v's root as a child of p with edge e
+    // Returns false if they're already in the same subtree
+    friend bool link_root(ptr e, ptr v, ptr p) {
+        assert(e && v && p);
+        assert(!e->c[0] && !e->c[1] && !e->c[2]);
+        v->expose();
+        p->expose();
+
+        while (v->p) v = v->p;
+        while (p->p) p = p->p;
+        if (v == p) return false;
+
+        e->is_path = true, e->is_vert = false;
+        attach(e, 0, p);
+        attach(e, 1, v);
+        e->_pull();
+
+        return true;
     }
 
     friend pair<ptr, ptr> cut(ptr e) {
@@ -375,5 +394,12 @@ template<class node> struct top_tree_node_base {
     friend ptr get_subtree(ptr v) {
         v->expose();
         return v;
+    }
+
+    friend ptr lca(ptr u, ptr v) {
+        if (u == v) return u;
+        u->expose();
+        ptr res = v->expose();
+        return u->p->p ? res : 0;
     }
 };
