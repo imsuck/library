@@ -37,6 +37,7 @@ template<class node> struct toptree_logger {
 
             if (!cur || vis.count(cur)) continue;
             vis.insert(cur);
+            cur->push_all();
 
             string label = cur->label();
             string uid = cur->graph_id() + "_" + to_string(iter);

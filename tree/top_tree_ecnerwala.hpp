@@ -248,7 +248,7 @@ template<class node> struct top_tree_node_base {
     }
 
     ptr splice_all() {
-        ptr res = 0;
+        ptr res = as_derived();
         for (ptr cur = as_derived(); cur; cur = cur->p) {
             if (!cur->is_path) res = cur->splice_non_path();
             assert(cur->is_path);
@@ -282,7 +282,7 @@ template<class node> struct top_tree_node_base {
         assert(!p);
         assert(v == c[1]);
 
-        return res;
+        return res == v ? as_derived() : res;
     }
 
     ptr meld_path_end() {
@@ -397,9 +397,10 @@ template<class node> struct top_tree_node_base {
     }
 
     friend ptr lca(ptr u, ptr v) {
-        if (u == v) return u;
         u->expose();
-        ptr res = v->expose();
-        return u->p->p ? res : 0;
+        auto up = u->p;
+        ptr l = v->expose();
+        if (u != v && up == u->p && (!up || !up->p)) return 0;
+        return l;
     }
 };
