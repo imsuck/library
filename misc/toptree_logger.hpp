@@ -41,7 +41,7 @@ template<class node, bool draw_graph = false> struct toptree_logger {
 
             if (!cur || vis.count(cur)) continue;
             vis.insert(cur);
-            cur->push_all();
+            cur->push_flip_all();
 
             if constexpr (draw_graph) {
                 if (!cur->is_vert) {
