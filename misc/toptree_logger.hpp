@@ -1,8 +1,10 @@
 #pragma once
 
 // node needs label() -> string, graph_id() -> string (uid)
-template<class node> struct toptree_logger {
+template<class node, bool draw_graph = false> struct toptree_logger {
   private:
+    set<pair<int, int>> forest_edges;
+    set<int> forest_vertices;
     set<node *> vis;
     ofstream dot;
     bool logging = false;
@@ -11,6 +13,8 @@ template<class node> struct toptree_logger {
 
     void start_subgraph(const string &desc) {
         vis.clear();
+        forest_edges.clear();
+        forest_vertices.clear();
 
         dot << "\n  subgraph cluster_" << iter << " {" << endl;
         dot << "    fontname = \"monospace\";" << endl;
@@ -22,7 +26,7 @@ template<class node> struct toptree_logger {
         dot << "    color = lightgrey;" << endl;
     }
 
-    void end_subgraph() { iter++, dot << "  }" << endl; }
+    void end_subgraph() { dot << "  }" << endl; }
 
     void add_tree(node *r) {
         if (!r) return;
@@ -39,10 +43,24 @@ template<class node> struct toptree_logger {
             vis.insert(cur);
             cur->push_all();
 
+            if constexpr (draw_graph) {
+                if (!cur->is_vert) {
+                    int a = cur->edge[0];
+                    int b = cur->edge[1];
+                    if (a > b) swap(a, b);
+                    forest_edges.insert({a, b});
+                    forest_vertices.insert(a);
+                    forest_vertices.insert(b);
+                } else {
+                    forest_vertices.insert(cur->id);
+                }
+            }
+
             string label = cur->label();
             string uid = cur->graph_id() + "_" + to_string(iter);
 
             string fill_color;
+            string font_color = "white";
             string shape;
             string style;
             if (cur->is_vert) {
@@ -52,16 +70,18 @@ template<class node> struct toptree_logger {
             } else if (cur->is_path) {
                 style = "filled";
                 fill_color = "#FFC107";
+                font_color = "black";
                 shape = "box";
             } else {
                 style = "rounded,filled";
-                fill_color = "#F44336";
+                fill_color = "#FE5F55";
                 shape = "box";
             }
 
             dot << "    " << uid << " [label=\"" << label
                 << "\", shape=" << shape << ", fillcolor=\"" << fill_color
-                << "\", style=\"" << style << "\"];" << endl;
+                << "\", fontcolor=\"" << font_color << "\", style=\"" << style
+                << "\"];" << endl;
 
             for (int i = 0; i < 3; ++i) {
                 node *child = cur->c[i];
@@ -82,6 +102,28 @@ template<class node> struct toptree_logger {
                 }
             }
         }
+    }
+
+    void draw_forest() {
+        dot << "\n  subgraph cluster_forest_" << iter << " {\n";
+        dot << "    fontname=\"monospace\";\n";
+        dot << "    label=\"Represented Forest\";\n";
+
+        for (int v : forest_vertices) {
+            string uid = "v" + to_string(v) + "_forest_" + to_string(iter);
+            dot << "    " << uid << " [label=\"" << v
+                << "\", shape=circle, fillcolor=\"#2196F3\", "
+                   "style=\"filled\"];\n";
+        }
+
+        for (auto [a, b] : forest_edges) {
+            string ua = "v" + to_string(a) + "_forest_" + to_string(iter);
+            string ub = "v" + to_string(b) + "_forest_" + to_string(iter);
+            dot << "    " << ua << " -> " << ub
+                << " [dir=none, color=black];\n";
+        }
+
+        dot << "  }\n";
     }
 
   public:
@@ -114,5 +156,9 @@ template<class node> struct toptree_logger {
         start_subgraph(desc);
     }
     void add(node *p) { assert(logging), add_tree(p); }
-    void end() { assert(logging), logging = false, end_subgraph(); }
+    void end() {
+        assert(logging), logging = false, end_subgraph();
+        if constexpr (draw_graph) draw_forest();
+        iter++;
+    }
 };

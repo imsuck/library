@@ -1,6 +1,7 @@
 #pragma once
 
 /**
+ * https://github.com/ecnerwala/cp-book/blob/master/src/top_tree.hpp
  * Convenient memo:
  *   Creating vertices:
  *     n->val = ...;
@@ -20,12 +21,12 @@
  *     assert(c[0] && c[1]);
  *     assert(c[0]->is_path && c[1]->is_path);
  *     assert(!c[2]);
- *   (path) vertices: self + rake(c[0], c[1])
+ *   (path) vertices: add_vertex(self, rake(c[0], c[1]))
  *     assert(is_path && is_vert);
  *     assert(!c[2]);
  *     if (c[0]) assert(!c[0]->is_path);
  *     if (c[1]) assert(!c[1]->is_path);
- *   non-path edges: rake(c[0], self + c[2], c[1])
+ *   non-path edges: rake(c[0], add_edge(self, c[2]), c[1])
  *     assert(!is_path && !is_vert);
  *     assert(c[2])
  *     assert(c[2]->is_path);
@@ -58,7 +59,7 @@ template<class node> struct top_tree_node_base {
 
     bool r() const { return !p || p->is_path != is_path; }
 
-  private:
+  protected:
 #define CHECK(a) \
     template<class T, class = void> struct has_##a##_t : false_type {}; \
     template<class T> struct has_##a##_t<T, void_t<decltype(&T::a)>> : true_type {}; \
@@ -70,7 +71,7 @@ template<class node> struct top_tree_node_base {
         swap(c[0], c[1]), rev ^= 1;
         if constexpr (has_flip<node>) as_derived()->flip();
     }
-    void _push() {
+    void push_rev() {
         if (rev) {
             assert(is_path);
             if (!is_vert) {
@@ -79,6 +80,9 @@ template<class node> struct top_tree_node_base {
             }
             rev = false;
         }
+    }
+    void _push() {
+        push_rev();
         if constexpr (has_push<node>) as_derived()->push();
     }
     void _pull() {
@@ -89,6 +93,17 @@ template<class node> struct top_tree_node_base {
     void push_all() {
         if (p) p->push_all();
         _push();
+    }
+    void push_flip_all() {
+        if (p) p->push_flip_all();
+        if (rev) {
+            assert(is_path);
+            if (!is_vert) {
+                c[0]->_flip();
+                c[1]->_flip();
+            }
+            rev = false;
+        }
     }
     ptr pull_all() {
         ptr cur = as_derived();
@@ -130,7 +145,6 @@ template<class node> struct top_tree_node_base {
         ptr pa = p;
         int x = d();
         assert(x != 2);
-        assert(c_d == !x);
         ptr ch = c[c_d]->c[!x];
 
         if (pa->p) pa->p_c() = as_derived();
@@ -302,7 +316,6 @@ template<class node> struct top_tree_node_base {
                 ch = ch->c[0];
             }
             ch->splay();
-            assert(!ch->c[0]);
 
             attach(ch, 0, rt->c[0]), rt->c[0] = 0;
 
@@ -343,6 +356,7 @@ template<class node> struct top_tree_node_base {
         attach(e, 1, v);
         e->_pull();
     }
+    friend void link(node &e, node &v, node &p) { link(&e, &v, &p); }
 
     // Link v's root as a child of p with edge e
     // Returns false if they're already in the same subtree
@@ -363,6 +377,9 @@ template<class node> struct top_tree_node_base {
 
         return true;
     }
+    friend bool link_root(node &e, node &v, node &p) {
+        return link_root(&e, &v, &p);
+    }
 
     friend pair<ptr, ptr> cut(ptr e) {
         assert(!e->is_vert);
@@ -382,6 +399,10 @@ template<class node> struct top_tree_node_base {
 
         return {l, r};
     }
+    friend pair<node &, node &> cut(node &e) {
+        auto r = cut(&e);
+        return {*r.first, *r.second};
+    }
 
     friend ptr get_path(ptr v) {
         assert(v->is_vert);
@@ -390,17 +411,18 @@ template<class node> struct top_tree_node_base {
         assert(!v->p->p);
         return v->p;
     }
+    friend node &get_path(node &v) { return *get_path(&v); }
 
-    friend ptr get_subtree(ptr v) {
-        v->expose();
-        return v;
-    }
+    friend ptr get_subtree(ptr v) { return v->expose(), v; }
+    friend node &get_subtree(node &v) { return v.expose(), v; }
 
     friend ptr lca(ptr u, ptr v) {
+        if (u == v) return u;
         u->expose();
         auto up = u->p;
         ptr l = v->expose();
         if (u != v && up == u->p && (!up || !up->p)) return 0;
         return l;
     }
+    friend ptr lca(node &u, node &v) { return lca(&u, &v); }
 };
