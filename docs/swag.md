@@ -1,5 +1,5 @@
 ---
-title: Sliding Window Aggregation
+title: Sliding Window Aggregation (SWAG)
 documentation_of: //ds/swag.hpp
 ---
 
