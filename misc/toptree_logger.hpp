@@ -2,6 +2,8 @@
 
 // node needs label() -> string, graph_id() -> string (uid)
 template<class node, bool draw_graph = false> struct toptree_logger {
+    bool enable = true;
+
   private:
     set<pair<int, int>> forest_edges;
     set<int> forest_vertices;
@@ -146,17 +148,24 @@ template<class node, bool draw_graph = false> struct toptree_logger {
     ~toptree_logger() {
         dot << "}" << endl;
         dot.close();
-        cerr << "\nGraphviz history generated: " << filename << endl;
+        if (enable)
+            cerr << "\nGraphviz history generated: " << filename << endl;
+        if (!enable) system(("rm " + filename).c_str());
     }
 
     void start(const string &desc = "") {
+        if (!enable) return;
         assert(!logging);
         logging = true;
-        cerr << "Iteration " << iter << ": " << desc << endl;
+        if (enable) cerr << "Iteration " << iter << ": " << desc << endl;
         start_subgraph(desc);
     }
-    void add(node *p) { assert(logging), add_tree(p); }
+    void add(node *p) {
+        if (!enable) return;
+        assert(logging), add_tree(p);
+    }
     void end() {
+        if (!enable) return;
         assert(logging), logging = false, end_subgraph();
         if constexpr (draw_graph) draw_forest();
         iter++;

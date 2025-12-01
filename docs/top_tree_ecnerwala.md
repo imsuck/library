@@ -17,19 +17,22 @@ implementation](https://github.com/ecnerwala/cp-book/blob/master/src/top_tree.hp
 
 Nodes can be vertices or edges. Vertices are created with `set_vert()`, and
 edges are linked between vertices. Nodes have three child pointers `c[0]`,
-`c[1]`, `c[2]` and flags `is_vert` and `is_path`.
+`c[1]`, `c[2]` and flags `is_vert` and `is_path`. Methods `push`, `pull`, `flip`
+can be omitted from the struct declaration.
 
 Example node:
 ```cpp
 struct node : top_tree_node_base<node> {
     int val = 0, sum = 0;
+    int path_lazy = 0;
     
     void push() {
-        // Be careful when pushing path update to vertices!
+        // Be careful not to push path update from vertices!
         if (!is_vert) {
-            if (c[0]) c[0]->do_lazy_update();
-            if (c[1]) c[1]->do_lazy_update();
+            if (c[0]) c[0]->do_path_update(path_lazy);
+            if (c[1]) c[1]->do_path_update(path_lazy);
         }
+        path_lazy = 0;
     }
     
     void pull() {
@@ -69,9 +72,9 @@ map<pair<int, int>, node> edges;
 link(&edges[{u, v}], &vert[u], &vert[v]);
 
 // Update edge info
-edges[{u, v}]->expose_edge();
-edges[{u, v}]->weight = ...;
-edges[{u, v}]->pull_all();
+edges[{u, v}].expose_edge();
+edges[{u, v}].weight = ...;
+edges[{u, v}].pull_all();
 
 // Query path
 vert[u].evert();

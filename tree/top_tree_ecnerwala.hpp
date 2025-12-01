@@ -59,7 +59,7 @@ template<class node> struct top_tree_node_base {
 
     bool r() const { return !p || p->is_path != is_path; }
 
-  protected:
+  // protected:
 #define CHECK(a) \
     template<class T, class = void> struct has_##a##_t : false_type {}; \
     template<class T> struct has_##a##_t<T, void_t<decltype(&T::a)>> : true_type {}; \
