@@ -18,7 +18,8 @@ struct RangeAffineRangeSum {
   static T id() { return {0, 0}; }
   static F fid() { return {1, 0}; }
   static T op(T l, T r) { return {l[0] + r[0], l[1] + r[1]}; }
-  static F comp(F l, F r) { return {r[0] * l[0], r[0] * l[1] + r[1]}; }
+  // l is applied later than r
+  static F comp(F l, F r) { return {l[0] * r[0], l[0] * r[1] + l[1]}; }
   static T map(F f, T x, I tl, I tr) {
     return {x[0] * f[0] + x[1] * f[1], x[1]};
   }
