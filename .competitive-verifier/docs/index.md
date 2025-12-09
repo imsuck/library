@@ -18,7 +18,8 @@ C++ version: C++17
   </ul>
 </details>
 
-## Recent Commits
+<details>
+<summary>Recent Commits</summary>
 
 <!-- RECENT_COMMITS_START -->- 36b3065 remove obsolete file
 - d57df76 Set up workflow dependencies for automated docs updates
@@ -27,3 +28,4 @@ C++ version: C++17
 - 9fb4b1f Add search operation to top tree implementation
 
 *Updated automatically on 2025-12-09 02:16 UTC*<!-- RECENT_COMMITS_END -->
+</details>

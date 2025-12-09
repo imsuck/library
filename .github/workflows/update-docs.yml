@@ -75,7 +75,7 @@ jobs:
 
         # Replace content between markers
         pattern = r'<!-- RECENT_COMMITS_START -->.*?<!-- RECENT_COMMITS_END -->'
-        new_content = f'<!-- RECENT_COMMITS_START -->{replacement}<!-- RECENT_COMMITS_END -->'
+        new_content = f'<!-- RECENT_COMMITS_START -->\n{replacement}\n<!-- RECENT_COMMITS_END -->'
 
         updated_content = re.sub(pattern, new_content, content, flags=re.DOTALL)
 
