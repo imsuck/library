@@ -45,14 +45,6 @@ async function loadRecentCommits() {
       li.innerHTML = `<code>${shortSha}</code> ${message}`;
       listElement.appendChild(li);
     });
-
-    // Add timestamp
-    const timestampLi = document.createElement('li');
-    timestampLi.style.fontStyle = 'italic';
-    timestampLi.style.opacity = '0.7';
-    timestampLi.textContent = `Updated on ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
-    listElement.appendChild(timestampLi);
-
   } catch (error) {
     listElement.innerHTML = '<li>Failed to load recent commits</li>';
     console.error('Error loading commits:', error);
