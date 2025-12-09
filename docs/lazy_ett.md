@@ -11,7 +11,7 @@ and updates on subtrees in $\mathcal O(\log n)$ time per operation.
 ## Operations
 - `LazyETT<M>(int n)`
   + Constructs lazy ETT for a tree with `n` vertices
-  + Time complexity: $\mathcal O(1)$
+  + Time complexity: $\mathcal O(n)$
 - `LazyETT<M>(const vector<T> &val)`
   + Constructs lazy ETT with initial values `val`
   + Time complexity: $\mathcal O(n)$

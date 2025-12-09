@@ -12,7 +12,7 @@ operation.
 ## Operations
 - `ETT<M>(int n)`
   + Constructs ETT for a tree with `n` vertices
-  + Time complexity: $\mathcal O(1)$
+  + Time complexity: $\mathcal O(n)$
 - `T get(int v)`
   + Returns the value at vertex `v`
   + Time complexity: $\mathcal O(\log n)$
