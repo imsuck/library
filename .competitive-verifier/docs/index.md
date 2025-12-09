@@ -22,11 +22,11 @@ C++ version: C++17
 <summary>Recent Commits</summary>
 <ul>
 <!-- RECENT_COMMITS_START -->
+<li><code>cc78a14</code> Update index.md</li>
 <li><code>e7f22ef</code> Format commits as HTML list items</li>
 <li><code>a0f3cb4</code> Make Recent Commits section collapsible in docs</li>
 <li><code>36b3065</code> remove obsolete file</li>
 <li><code>d57df76</code> Set up workflow dependencies for automated docs updates</li>
-<li><code>6ee0058</code> Add automated recent commits to competitive-verifier docs</li>
 
 <p><em>Updated automatically on 2025-12-09 02:31 UTC</em></p>
 <!-- RECENT_COMMITS_END -->
