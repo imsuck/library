@@ -22,12 +22,12 @@ C++ version: C++17
 <summary>Recent Commits</summary>
 
 <!-- RECENT_COMMITS_START -->
-- 36b3065 remove obsolete file
-- d57df76 Set up workflow dependencies for automated docs updates
-- 6ee0058 Add automated recent commits to competitive-verifier docs
-- 97092a2 add top tree non-local search
-- 9fb4b1f Add search operation to top tree implementation
+<li><code>e7f22ef</code> Format commits as HTML list items</li>
+<li><code>a0f3cb4</code> Make Recent Commits section collapsible in docs</li>
+<li><code>36b3065</code> remove obsolete file</li>
+<li><code>d57df76</code> Set up workflow dependencies for automated docs updates</li>
+<li><code>6ee0058</code> Add automated recent commits to competitive-verifier docs</li>
 
-*Updated automatically on 2025-12-09 02:16 UTC*
+<p><em>Updated automatically on 2025-12-09 02:31 UTC</em></p>
 <!-- RECENT_COMMITS_END -->
 </details>
