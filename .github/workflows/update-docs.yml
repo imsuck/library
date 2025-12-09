@@ -49,7 +49,7 @@ jobs:
                 hash_part, msg_part = line.split('|', 1)
                 # Skip automated commits
                 if '[automated]' not in msg_part:
-                    commits.append(f'- {hash_part} {msg_part}')
+                    commits.append(f'<li><code>{hash_part}</code> {msg_part}</li>')
                     if len(commits) >= commit_count:
                         break
 
@@ -60,7 +60,7 @@ jobs:
         with open('commits_content.md', 'w') as f:
             f.write('\n')
             f.write('\n'.join(commits))
-            f.write(f'\n\n*Updated automatically on {timestamp}*\n')
+            f.write(f'\n\n<p><em>Updated automatically on {timestamp}</em></p>\n')
         " $COMMIT_COUNT
 
         # Use Python to replace content between markers
