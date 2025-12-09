@@ -20,6 +20,10 @@ C++ version: C++17
 
 ## Recent Commits
 
-<!-- RECENT_COMMITS_START -->
-*Loading recent commits...*
-<!-- RECENT_COMMITS_END -->
+<!-- RECENT_COMMITS_START -->- 6ee0058 Add automated recent commits to competitive-verifier docs
+- 97092a2 add top tree non-local search
+- 9fb4b1f Add search operation to top tree implementation
+- 5591511 fix lazy segment tree docs
+- 4ac56b8 wavelet matrix doc fix
+
+*Updated automatically on *<!-- RECENT_COMMITS_END -->
