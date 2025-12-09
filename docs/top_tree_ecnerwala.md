@@ -92,6 +92,8 @@ subtree->push_all();
 ```
 
 ## Operations
+> **Note:** Some operations have variants that take references to nodes (`node &`) instead of pointers (`ptr`).
+
 - `void this->set_vert()`
   + Marks a node as a vertex
   + Must be called after setting vertex data
@@ -135,4 +137,9 @@ subtree->push_all();
   + Time complexity: $\mathcal O(\log n)$ amortized
 - `friend ptr lca(ptr u, ptr v)`
   + Returns LCA of `u` and `v`, or `nullptr` if not connected
+  + Time complexity: $\mathcal O(\log n)$ amortized
+- `friend ptr search(ptr p, F select)`
+  + Generic search operation that traverses the tree using a selector function
+  + `p` must be a vertex, `select` is a function that takes a node and returns the next node to visit or `nullptr` to stop
+  + Returns the final node after traversal and makes it the root via `evert()`
   + Time complexity: $\mathcal O(\log n)$ amortized

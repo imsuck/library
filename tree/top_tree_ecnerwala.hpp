@@ -59,7 +59,7 @@ template<class node> struct top_tree_node_base {
 
     bool r() const { return !p || p->is_path != is_path; }
 
-  // protected:
+  protected:
 #define CHECK(a) \
     template<class T, class = void> struct has_##a##_t : false_type {}; \
     template<class T> struct has_##a##_t<T, void_t<decltype(&T::a)>> : true_type {}; \
@@ -425,4 +425,24 @@ template<class node> struct top_tree_node_base {
         return l;
     }
     friend ptr lca(node &u, node &v) { return lca(&u, &v); }
+
+    template<class F> friend node *search(node *p, F &&select) {
+        while (node *nxt = select(p)) {
+            assert(p->is_vert);
+            while (true) {
+                p->_push(), nxt = select(p);
+                if (nxt == p->c[2]) break;
+                p = nxt;
+            }
+            p = nxt;
+            assert(p->is_path);
+            while (!p->is_vert) p->_push(), p = select(p);
+        }
+        p->evert();
+        assert(!select(p));
+        return p;
+    }
+    template<class F> friend node *search(node &p, F &&select) {
+        return search(&p, forward<F>(select));
+    }
 };
