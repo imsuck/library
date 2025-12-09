@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - "main"
+  workflow_run:
+    workflows: ["Update Docs with Recent Commits"]
+    types: [completed]
   workflow_dispatch:
     inputs:
       ignore_prev_result:
