@@ -20,7 +20,7 @@ C++ version: C++17
 
 <details>
 <summary>Recent Commits</summary>
-
+<ul>
 <!-- RECENT_COMMITS_START -->
 <li><code>e7f22ef</code> Format commits as HTML list items</li>
 <li><code>a0f3cb4</code> Make Recent Commits section collapsible in docs</li>
@@ -30,4 +30,5 @@ C++ version: C++17
 
 <p><em>Updated automatically on 2025-12-09 02:31 UTC</em></p>
 <!-- RECENT_COMMITS_END -->
+</ul>
 </details>
