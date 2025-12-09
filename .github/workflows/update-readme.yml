@@ -1,0 +1,94 @@
+name: Update Docs with Recent Commits
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      commit_count:
+        description: 'Number of recent commits to display'
+        required: false
+        default: '5'
+        type: string
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update README with recent commits
+      run: |
+        # Get commit count from input or default to 5
+        COMMIT_COUNT=${{ github.event.inputs.commit_count || '5' }}
+
+        # Generate recent commits content (excluding automated commits)
+        python3 -c "
+        import subprocess
+        import sys
+
+        # Get commit count
+        commit_count = int(sys.argv[1]) if len(sys.argv) > 1 else 5
+
+        # Get all recent commits (more than needed to account for filtering)
+        result = subprocess.run(['git', 'log', '--oneline', '-n', str(commit_count * 2),
+                               '--pretty=format:%h|%s'],
+                               capture_output=True, text=True, check=True)
+
+        commits = []
+        for line in result.stdout.strip().split('\n'):
+            if line.strip():
+                hash_part, msg_part = line.split('|', 1)
+                # Skip automated commits
+                if '[automated]' not in msg_part:
+                    commits.append(f'- {hash_part} {msg_part}')
+                    if len(commits) >= commit_count:
+                        break
+
+        # Write content
+        with open('commits_content.md', 'w') as f:
+            f.write('\n')
+            f.write('\n'.join(commits))
+            f.write('\n\n*Updated automatically on $(date -u \'+%Y-%m-%d %H:%M UTC\')*\n')
+        " $COMMIT_COUNT
+
+        # Use Python to replace content between markers
+        python3 -c "
+        import re
+
+        with open('.competitive-verifier/docs/index.md', 'r') as f:
+            content = f.read()
+
+        with open('commits_content.md', 'r') as f:
+            replacement = f.read().strip()
+
+        # Replace content between markers
+        pattern = r'<!-- RECENT_COMMITS_START -->.*?<!-- RECENT_COMMITS_END -->'
+        new_content = f'<!-- RECENT_COMMITS_START -->{replacement}<!-- RECENT_COMMITS_END -->'
+
+        updated_content = re.sub(pattern, new_content, content, flags=re.DOTALL)
+
+        with open('.competitive-verifier/docs/index.md', 'w') as f:
+            f.write(updated_content)
+        "
+
+        rm commits_content.md
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .competitive-verifier/docs/index.md
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update docs with recent commits [automated]"
+          git push
+        fi

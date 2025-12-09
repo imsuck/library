@@ -17,3 +17,9 @@ C++ version: C++17
     <li>[tko919](https://tko919.github.io/library/)</li>
   </ul>
 </details>
+
+## Recent Commits
+
+<!-- RECENT_COMMITS_START -->
+*Loading recent commits...*
+<!-- RECENT_COMMITS_END -->
