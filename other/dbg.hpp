@@ -1,6 +1,8 @@
 #ifndef LOCAL
-    #define dbg(...) void()
+    #define dbg(...) (void(0))
     #define debug() if (false)
+    #define DBG_FORMAT_STRUCT(...)
+    #define DBG_PRETTY_STRUCT(...)
 #else
 namespace dbg::options {
     int _ = []() {
