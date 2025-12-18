@@ -4,7 +4,7 @@
 #else
 namespace dbg::options {
     int _ = []() {
-        fixed_float = false;
+        fixed_float = true;
         float_precision = 6;
         trivial_string = true;
         max_container_elements = -1;
