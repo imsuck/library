@@ -3,6 +3,12 @@
     #define debug() if (false)
 #else
 namespace dbg::options {
-    template<> constexpr bool trivial_string() { return true; }
+    int _ = []() {
+        fixed_float = false;
+        float_precision = 6;
+        trivial_string = true;
+        max_container_elements = -1;
+        return 0;
+    }();
 } // namespace dbg::options
 #endif
