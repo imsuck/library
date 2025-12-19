@@ -23,7 +23,7 @@ struct RollingHash {
     u64 query(int l, int r) const noexcept {
         return add(hashes[r], mod - mul(hashes[l], power[r - l]));
     }
-    u64 concat(u64 l, u64 r, u64 lenr) const noexcept {
+    u64 concat(u64 l, u64 r, int lenr) const noexcept {
         return add(mul(l, power[lenr]), r);
     }
     void push_back(char c) noexcept {
