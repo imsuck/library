@@ -8,6 +8,8 @@ plugins:
 - jemoji
 - jekyll-remote-theme
 
+exclude: ["test/template.cpp"]
+
 lang: en
 
 timezone: Asia/Ho_Chi_Minh
